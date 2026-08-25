@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-25T11:17:31Z",
+  "title": "Design System: Stillwater Letters",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#fcfcf8",
+        "tonalRamp": ["oklch(15% 0.01 110)", "oklch(25% 0.01 110)", "oklch(38% 0.01 110)", "oklch(52% 0.01 110)", "oklch(65% 0.01 110)", "oklch(78% 0.01 110)", "oklch(88% 0.01 110)", "oklch(95% 0.01 110)"]
+      },
+      "pearl": {
+        "role": "neutral",
+        "displayName": "Pearl Ground",
+        "canonical": "#f3f5f1",
+        "tonalRamp": ["oklch(15% 0.012 135)", "oklch(25% 0.012 135)", "oklch(38% 0.012 135)", "oklch(52% 0.012 135)", "oklch(65% 0.012 135)", "oklch(78% 0.012 135)", "oklch(88% 0.012 135)", "oklch(95% 0.012 135)"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Stillwater Ink",
+        "canonical": "#26312f",
+        "tonalRamp": ["oklch(15% 0.025 175)", "oklch(25% 0.025 175)", "oklch(38% 0.025 175)", "oklch(52% 0.025 175)", "oklch(65% 0.025 175)", "oklch(78% 0.025 175)", "oklch(88% 0.025 175)", "oklch(95% 0.025 175)"]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#66726f",
+        "tonalRamp": ["oklch(15% 0.02 175)", "oklch(25% 0.02 175)", "oklch(38% 0.02 175)", "oklch(52% 0.02 175)", "oklch(65% 0.02 175)", "oklch(78% 0.02 175)", "oklch(88% 0.02 175)", "oklch(95% 0.02 175)"]
+      },
+      "mineral": {
+        "role": "primary",
+        "displayName": "Mineral Pigment",
+        "canonical": "#668184",
+        "tonalRamp": ["oklch(15% 0.04 190)", "oklch(25% 0.04 190)", "oklch(38% 0.04 190)", "oklch(52% 0.04 190)", "oklch(65% 0.04 190)", "oklch(78% 0.04 190)", "oklch(88% 0.04 190)", "oklch(95% 0.04 190)"]
+      },
+      "mineral-dark": {
+        "role": "primary",
+        "displayName": "Deep Mineral",
+        "canonical": "#405e61",
+        "tonalRamp": ["oklch(15% 0.045 190)", "oklch(25% 0.045 190)", "oklch(38% 0.045 190)", "oklch(52% 0.045 190)", "oklch(65% 0.045 190)", "oklch(78% 0.045 190)", "oklch(88% 0.045 190)", "oklch(95% 0.045 190)"]
+      },
+      "mineral-deep": {
+        "role": "primary",
+        "displayName": "Mineral Depth",
+        "canonical": "#314f52",
+        "tonalRamp": ["oklch(15% 0.05 190)", "oklch(25% 0.05 190)", "oklch(38% 0.05 190)", "oklch(52% 0.05 190)", "oklch(65% 0.05 190)", "oklch(78% 0.05 190)", "oklch(88% 0.05 190)", "oklch(95% 0.05 190)"]
+      },
+      "mist": {
+        "role": "secondary",
+        "displayName": "Mist Wash",
+        "canonical": "#dce3df",
+        "tonalRamp": ["oklch(15% 0.015 165)", "oklch(25% 0.015 165)", "oklch(38% 0.015 165)", "oklch(52% 0.015 165)", "oklch(65% 0.015 165)", "oklch(78% 0.015 165)", "oklch(88% 0.015 165)", "oklch(95% 0.015 165)"]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Pearl Hairline",
+        "canonical": "#d8dfdb",
+        "tonalRamp": ["oklch(15% 0.012 165)", "oklch(25% 0.012 165)", "oklch(38% 0.012 165)", "oklch(52% 0.012 165)", "oklch(65% 0.012 165)", "oklch(78% 0.012 165)", "oklch(88% 0.012 165)", "oklch(95% 0.012 165)"]
+      },
+      "danger": {
+        "role": "tertiary",
+        "displayName": "Restrained Red",
+        "canonical": "#a33e38",
+        "tonalRamp": ["oklch(15% 0.12 28)", "oklch(25% 0.12 28)", "oklch(38% 0.12 28)", "oklch(52% 0.12 28)", "oklch(65% 0.12 28)", "oklch(78% 0.12 28)", "oklch(88% 0.12 28)", "oklch(95% 0.12 28)"]
+      },
+      "deep-water": {
+        "role": "primary",
+        "displayName": "Deep Water Field",
+        "canonical": "#405d60",
+        "tonalRamp": ["oklch(15% 0.045 190)", "oklch(25% 0.045 190)", "oklch(38% 0.045 190)", "oklch(52% 0.045 190)", "oklch(65% 0.045 190)", "oklch(78% 0.045 190)", "oklch(88% 0.045 190)", "oklch(95% 0.045 190)"]
+      },
+      "field-white": {
+        "role": "neutral",
+        "displayName": "Field White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(25% 0 0)", "oklch(38% 0 0)", "oklch(52% 0 0)", "oklch(65% 0 0)", "oklch(78% 0 0)", "oklch(88% 0 0)", "oklch(95% 0 0)"]
+      },
+      "inverse-ink": {
+        "role": "neutral",
+        "displayName": "Inverse Ink",
+        "canonical": "#edf4ef",
+        "tonalRamp": ["oklch(15% 0.015 150)", "oklch(25% 0.015 150)", "oklch(38% 0.015 150)", "oklch(52% 0.015 150)", "oklch(65% 0.015 150)", "oklch(78% 0.015 150)", "oklch(88% 0.015 150)", "oklch(95% 0.015 150)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Invitation Display", "purpose": "Couple names and the largest invitation moments." },
+      "headline": { "displayName": "Page Headline", "purpose": "Dashboard page headings and major administrative hierarchy." },
+      "title": { "displayName": "Section Title", "purpose": "Section headings and compact content titles." },
+      "body": { "displayName": "Body", "purpose": "Reading, instructions, form content, and navigation." },
+      "label": { "displayName": "Utility Label", "purpose": "Table headings, metadata, and compact statuses." }
+    },
+    "shadows": [
+      { "name": "selected-control", "value": "0 2px 7px rgba(39,54,49,.08)", "purpose": "Lift the active segment inside an outlined filter." },
+      { "name": "floating-notice", "value": "0 10px 30px rgba(40,55,50,.12)", "purpose": "Separate transient feedback from the page." },
+      { "name": "overlay-sheet", "value": "-15px 0 50px rgba(26,40,35,.14)", "purpose": "Separate a side sheet from its dimmed backdrop." },
+      { "name": "device-preview", "value": "0 24px 55px rgba(32,45,41,.18)", "purpose": "Give the phone preview physical depth." }
+    ],
+    "motion": [
+      { "name": "state-standard", "value": "180ms ease", "purpose": "Button background, border, color, and lift transitions." },
+      { "name": "content-reveal", "value": "800ms ease", "purpose": "Fade invitation content into view." },
+      { "name": "paper-lift", "value": "1.15s cubic-bezier(.22,1,.36,1)", "purpose": "Lift the fixed invitation cover away after opening." },
+      { "name": "water-pulse", "value": "1.7s ease-out", "purpose": "Expand and fade the circular loading mark." },
+      { "name": "pigment-drift", "value": "8s ease-in-out", "purpose": "Slowly alter cover-ring rotation and curvature." }
+    ],
+    "breakpoints": [
+      { "name": "dashboard-compact", "value": "1050px" },
+      { "name": "mobile", "value": "760px" },
+      { "name": "narrow-mobile", "value": "430px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main administrative action with deep mineral fill and restrained lift.",
+      "html": "<button class=\"ds-button-primary\">Simpan undangan</button>",
+      "css": ".ds-button-primary { min-height: 44px; border: 1px solid transparent; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; border-radius: 8px; color: #fff; background: var(--mineral-dark); font-family: \"Onest Variable\", sans-serif; font-weight: 650; cursor: pointer; transition: background .18s ease, transform .18s ease; } .ds-button-primary:hover { background: #314f52; transform: translateY(-1px); } .ds-button-primary:focus-visible { outline: 3px solid rgba(102,129,132,.34); outline-offset: 2px; } .ds-button-primary:active { transform: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A quiet outlined action for cancellation, preview, and lower-priority choices.",
+      "html": "<button class=\"ds-button-secondary\">Batal</button>",
+      "css": ".ds-button-secondary { min-height: 44px; border: 1px solid #cad4cf; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; color: var(--ink); background: transparent; font-family: \"Onest Variable\", sans-serif; font-weight: 650; cursor: pointer; transition: background .18s ease, border-color .18s ease, transform .18s ease; } .ds-button-secondary:hover { background: #e9eeeb; border-color: #b7c3bd; transform: translateY(-1px); } .ds-button-secondary:focus-visible { outline: 3px solid rgba(102,129,132,.34); outline-offset: 2px; } .ds-button-secondary:active { transform: none; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "The standard white dashboard field with a cool hairline stroke.",
+      "html": "<label class=\"ds-field\">Nama tamu<input placeholder=\"Masukkan nama lengkap\"></label>",
+      "css": ".ds-field { display: grid; gap: 8px; color: #34413e; font-family: \"Onest Variable\", sans-serif; font-size: .9rem; font-weight: 650; } .ds-field input { width: 100%; min-height: 46px; color: var(--ink); background: #fff; border: 1px solid #cbd4cf; border-radius: 7px; padding: 12px 13px; font: 450 1rem \"Onest Variable\", sans-serif; } .ds-field input::placeholder { color: #7b8783; opacity: 1; } .ds-field input:hover { border-color: #b7c3bd; } .ds-field input:focus-visible { outline: 3px solid rgba(102,129,132,.34); outline-offset: 2px; }"
+    },
+    {
+      "name": "Dashboard Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "A quiet vertical navigation row whose current destination becomes a deep mineral field.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">Ringkasan</a><a class=\"active\" href=\"#\">Daftar tamu</a></nav>",
+      "css": ".ds-nav { display: grid; gap: 5px; font-family: \"Onest Variable\", sans-serif; } .ds-nav a { min-height: 46px; padding: 0 13px; display: flex; align-items: center; border-radius: 7px; color: #53615e; text-decoration: none; font-weight: 570; } .ds-nav a:hover { background: rgba(255,255,255,.55); } .ds-nav a.active { color: #fff; background: var(--mineral-dark); } .ds-nav a:focus-visible { outline: 3px solid rgba(102,129,132,.34); outline-offset: 2px; } .ds-nav a:active { background: #314f52; }"
+    },
+    {
+      "name": "Segmented Filter",
+      "kind": "chip",
+      "description": "A compact outlined status filter with one lightly lifted white selection.",
+      "html": "<div class=\"ds-segmented\"><button>Semua</button><button class=\"active\">Belum</button><button>Terkirim</button></div>",
+      "css": ".ds-segmented { width: fit-content; display: flex; gap: 3px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; font-family: \"Onest Variable\", sans-serif; } .ds-segmented button { min-height: 38px; padding: 0 14px; border: 0; border-radius: 5px; background: transparent; color: var(--muted); cursor: pointer; } .ds-segmented button:hover { color: var(--ink); } .ds-segmented button.active { color: var(--ink); background: #fff; box-shadow: 0 2px 7px rgba(39,54,49,.08); } .ds-segmented button:focus-visible { outline: 3px solid rgba(102,129,132,.34); outline-offset: 2px; } .ds-segmented button:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Guest Status",
+      "kind": "chip",
+      "refersTo": "status",
+      "description": "Text-supported delivery states in restrained sand and green fields.",
+      "html": "<div class=\"ds-statuses\"><span class=\"ds-status ds-unsent\">Belum dikirim</span><span class=\"ds-status ds-sent\">Terkirim</span></div>",
+      "css": ".ds-statuses { display: flex; gap: 8px; font-family: \"Onest Variable\", sans-serif; } .ds-status { width: fit-content; padding: 5px 8px; border-radius: 4px; font-size: .72rem; font-weight: 700; white-space: nowrap; } .ds-unsent { color: #725b31; background: #f3ead3; } .ds-sent { color: #315d51; background: #deece6; }"
+    },
+    {
+      "name": "Invitation Opening Action",
+      "kind": "button",
+      "refersTo": "invitation-action",
+      "description": "The cover's translucent pill action with a pearl circular arrow endpoint.",
+      "html": "<button class=\"ds-open-invitation\">Buka undangan<span><svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></span></button>",
+      "css": ".ds-open-invitation { min-height: 50px; padding: 0 7px 0 20px; border: 1px solid rgba(255,255,255,.58); border-radius: 40px; color: #fff; background: rgba(25,43,40,.2); display: inline-flex; align-items: center; gap: 15px; font: 650 1rem \"Onest Variable\", sans-serif; cursor: pointer; transition: background .18s ease, transform .18s ease; } .ds-open-invitation span { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: var(--mineral-dark); background: #f3f7f3; } .ds-open-invitation:hover { background: rgba(25,43,40,.38); transform: translateY(-1px); } .ds-open-invitation:focus-visible { outline: 3px solid rgba(240,247,242,.55); outline-offset: 2px; } .ds-open-invitation:active { transform: none; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Stillwater Letters",
+    "overview": "Stillwater Letters treats the interface as pearl paper lifted from moving water. Mineral pigment, fine concentric lines, documentary photography, low-contrast surfaces, and generous open space create a personal editorial character rather than a stack of decorative wedding cards.\n\nThe public invitation carries the most expressive scale and motion, while the administration surfaces stay quiet, direct, and structurally legible. Across both, Bricolage Grotesque supplies the human display voice, Onest carries utility copy, and photography remains the emotional focus.",
+    "keyCharacteristics": [
+      "Cool pearl and paper surfaces with mineral blue-green emphasis.",
+      "Oversized, tightly tracked display typography beside compact utility labels.",
+      "Hairline dividers and tonal fields instead of boxed card stacks.",
+      "Concentric and irregular ripple outlines as the recurring signature.",
+      "Restrained motion that opens, drifts, or pulses like disturbed water."
+    ],
+    "rules": [
+      { "name": "The Mineral Restraint Rule", "body": "Deep mineral marks the active path and major editorial fields; it does not flood every control.", "section": "colors" },
+      { "name": "The Two-Voice Rule", "body": "Use Bricolage Grotesque for expressive hierarchy and Onest for reading and operation; do not introduce a third typographic voice.", "section": "typography" },
+      { "name": "The Flat-by-Default Rule", "body": "Lists, sections, and resting controls use lines and tonal layering; shadows are reserved for state, overlay, or physical-object cues.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do let pearl space, hairlines, and typography establish hierarchy before adding containers.",
+      "Do keep public actions comfortable at phone scale with at least the observed 44px touch target.",
+      "Do use ripple outlines as restrained structural accents and motion cues.",
+      "Do let real photography carry the invitation's emotion."
+    ],
+    "donts": [
+      "Don't replace the editorial section flow with a generic stack of floral wedding cards.",
+      "Don't add decorative dashboard cards where a line, row, or tonal field already provides structure.",
+      "Don't spread shadows across resting surfaces.",
+      "Don't introduce saturated accent colors or a third font voice into the observed system."
+    ]
+  }
+}

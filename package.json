@@ -1,0 +1,28 @@
+{
+  "name": "stillwater-wedding-invitation",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:api": "node --env-file=.env --watch api/index.js",
+    "build": "vite build",
+    "start": "vite preview",
+    "test": "node --test",
+    "hash-password": "node scripts/hash-password.js"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.2.8",
+    "@fontsource-variable/onest": "^5.2.8",
+    "@vercel/blob": "^2.8.0",
+    "express": "^5.1.0",
+    "mongodb": "^6.18.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.8.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.2",
+    "vite": "^7.1.3"
+  }
+}
