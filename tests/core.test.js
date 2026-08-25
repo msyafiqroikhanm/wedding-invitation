@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createSlug, isValidPhone, isValidSlug, normalizePhone, renderWhatsAppTemplate } from "../server/validation.js";
+import { createSlug, isAllowedOrigin, isValidPhone, isValidSlug, normalizePhone, renderWhatsAppTemplate } from "../server/validation.js";
 import { createSession } from "../server/auth.js";
 
 test("normalizes Indonesian WhatsApp numbers", () => {
@@ -32,4 +32,10 @@ test("refuses to sign sessions without a strong secret", () => {
   delete process.env.SESSION_SECRET;
   assert.throws(() => createSession("admin@example.com"), /minimal 32 karakter/);
   if (original) process.env.SESSION_SECRET = original;
+});
+
+test("accepts deployment and configured origins but rejects foreign origins", () => {
+  assert.equal(isAllowedOrigin("https://wedding.vercel.app", "https://wedding.vercel.app", "http://localhost:5173"), true);
+  assert.equal(isAllowedOrigin("http://localhost:5173", "http://localhost:3000", "http://localhost:5173/"), true);
+  assert.equal(isAllowedOrigin("https://attacker.example", "https://wedding.vercel.app", "http://localhost:5173"), false);
 });

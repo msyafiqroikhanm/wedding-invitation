@@ -4,7 +4,7 @@ import { handleUpload } from "@vercel/blob/client";
 import { pathToFileURL } from "node:url";
 import { clearSessionCookie, createSession, readSession, requireAdmin, setSessionCookie, verifyPassword } from "../server/auth.js";
 import { getDb, toObjectId } from "../server/db.js";
-import { cleanText, createSlug, isValidPhone, isValidSlug, normalizePhone } from "../server/validation.js";
+import { cleanText, createSlug, isAllowedOrigin, isValidPhone, isValidSlug, normalizePhone } from "../server/validation.js";
 
 const app = express();
 app.disable("x-powered-by");
@@ -16,8 +16,9 @@ const asyncRoute = (handler) => (req, res, next) => Promise.resolve(handler(req,
 app.use((req, res, next) => {
   if (!["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) return next();
   const origin = req.get("origin");
-  const allowed = process.env.APP_URL;
-  if (origin && allowed && origin !== allowed) return res.status(403).json({ error: "Origin request tidak diizinkan." });
+  const protocol = String(req.get("x-forwarded-proto") || req.protocol).split(",")[0].trim();
+  const host = String(req.get("x-forwarded-host") || req.get("host")).split(",")[0].trim();
+  if (!isAllowedOrigin(origin, `${protocol}://${host}`, process.env.APP_URL)) return res.status(403).json({ error: "Origin request tidak diizinkan." });
   next();
 });
 

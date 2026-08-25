@@ -35,3 +35,13 @@ export function renderWhatsAppTemplate(template, values) {
 export function cleanText(value, max = 500) {
   return String(value ?? "").replace(/[<>]/g, "").trim().slice(0, max);
 }
+
+export function isAllowedOrigin(origin, requestOrigin, configuredOrigin) {
+  if (!origin) return true;
+  try {
+    const normalized = new URL(origin).origin;
+    return [requestOrigin, configuredOrigin].filter(Boolean).some((candidate) => new URL(candidate).origin === normalized);
+  } catch {
+    return false;
+  }
+}
