@@ -11,6 +11,7 @@ export default function Guests({ guests, setGuests, settings }) {
   const [params, setParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState(params.get("status") || "all");
+  const [connection, setConnection] = useState("all");
   const [editing, setEditing] = useState(params.get("add") ? emptyForm : null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -22,10 +23,17 @@ export default function Guests({ guests, setGuests, settings }) {
     }
   }, [params, setParams]);
 
+  const connections = useMemo(() => [...new Set(guests.map((guest) => guest.connection).filter(Boolean))].sort((a, b) => a.localeCompare(b, "id")), [guests]);
+
+  useEffect(() => {
+    if (connection !== "all" && !connections.includes(connection)) setConnection("all");
+  }, [connection, connections]);
+
   const filtered = useMemo(() => guests.filter((guest) => {
     const matchesQuery = `${guest.name} ${guest.phone}`.toLowerCase().includes(query.toLowerCase());
-    return matchesQuery && (status === "all" || (status === "sent" ? guest.sentAt : !guest.sentAt));
-  }), [guests, query, status]);
+    const matchesStatus = status === "all" || (status === "sent" ? guest.sentAt : !guest.sentAt);
+    return matchesQuery && matchesStatus && (connection === "all" || guest.connection === connection);
+  }), [guests, query, status, connection]);
 
   function replaceGuest(updated) {
     setGuests((current) => current.map((guest) => guest._id === updated._id ? updated : guest));
@@ -83,7 +91,10 @@ export default function Guests({ guests, setGuests, settings }) {
     {error && <p className="form-error" role="alert">{error}</p>}
     <div className="list-toolbar">
       <label className="search-field"><Icon name="search"/><span className="sr-only">Cari tamu</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari nama atau nomor" /></label>
-      <div className="segmented" aria-label="Filter status">{[["all", "Semua"], ["unsent", "Belum"], ["sent", "Terkirim"]].map(([value, label]) => <button key={value} className={status === value ? "active" : ""} onClick={() => setStatus(value)}>{label}</button>)}</div>
+      <div className="toolbar-filters">
+        <label className="connection-filter"><span className="sr-only">Filter berdasarkan koneksi</span><select value={connection} onChange={(event) => setConnection(event.target.value)}><option value="all">Semua koneksi</option>{connections.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+        <div className="segmented" aria-label="Filter status">{[["all", "Semua"], ["unsent", "Belum"], ["sent", "Terkirim"]].map(([value, label]) => <button key={value} className={status === value ? "active" : ""} onClick={() => setStatus(value)}>{label}</button>)}</div>
+      </div>
     </div>
     {filtered.length ? <div className="guest-table" role="table">
       <div className="guest-table-head" role="row"><span>Tamu</span><span>WhatsApp</span><span>Koneksi</span><span>Status</span><span className="sr-only">Aksi</span></div>
@@ -93,7 +104,7 @@ export default function Guests({ guests, setGuests, settings }) {
         <span className={`status ${guest.sentAt ? "status-sent" : "status-unsent"}`}>{guest.sentAt ? "Sudah dikirim" : "Belum dikirim"}</span>
         <div className="row-actions"><button className="button button-send" onClick={() => send(guest)}><Icon name="send" size={17}/>{guest.sentAt ? "Kirim lagi" : "Kirim WA"}</button><button className="icon-button" onClick={() => copyLink(guest)} aria-label={`Salin link ${guest.name}`}><Icon name="copy" size={18}/></button><details><summary className="icon-button" aria-label="Aksi lainnya"><Icon name="more"/></summary><div className="action-menu"><button onClick={() => setEditing(guest)}><Icon name="edit"/>Edit</button><button onClick={() => regenerate(guest)}><Icon name="link"/>Buat link baru</button>{guest.sentAt && <button onClick={() => reset(guest)}><Icon name="close"/>Tandai belum</button>}<button className="danger" onClick={() => remove(guest)}><Icon name="trash"/>Hapus</button></div></details></div>
       </div>)}
-    </div> : <Empty title="Tidak ada tamu ditemukan" text={query || status !== "all" ? "Ubah pencarian atau filter untuk melihat tamu lain." : "Tambahkan nama pertama untuk membuat link personal."} />}
+    </div> : <Empty title="Tidak ada tamu ditemukan" text={query || status !== "all" || connection !== "all" ? "Ubah pencarian atau filter untuk melihat tamu lain." : "Tambahkan nama pertama untuk membuat link personal."} />}
     {editing && <GuestForm guest={editing} onClose={() => setEditing(null)} onSaved={(saved) => { setGuests((current) => editing._id ? current.map((guest) => guest._id === saved._id ? saved : guest) : [saved, ...current]); setEditing(null); setNotice(`${saved.name} berhasil disimpan.`); }} />}
   </div>;
 }

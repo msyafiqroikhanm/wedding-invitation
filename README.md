@@ -167,7 +167,9 @@ Browsers require a user gesture. Music starts after the guest presses `Buka unda
 
 ### [Unreleased]
 
-No unreleased changes.
+#### Added
+
+- Added guest filtering by connection alongside search and delivery status.
 
 ### [0.1.0] - 2026-08-25
 
