@@ -236,6 +236,7 @@ function defaultSettings() {
     couple: { partnerOne: "", partnerTwo: "", fullNameOne: "", fullNameTwo: "", openingText: "", closingText: "" },
     events: [emptyEvent("Akad"), emptyEvent("Resepsi")],
     heroPhoto: "",
+    interludePhoto: "",
     profilePhotos: ["", ""],
     gallery: [],
     backsound: "",
@@ -266,6 +267,7 @@ function sanitizeSettings(input) {
     },
     events,
     heroPhoto: safeUrl(input.heroPhoto),
+    interludePhoto: safeUrl(input.interludePhoto),
     profilePhotos: Array.from({ length: 2 }, (_, index) => safeUrl(input.profilePhotos?.[index])),
     gallery: (input.gallery ?? []).slice(0, 12).map(safeUrl).filter(Boolean),
     backsound: safeUrl(input.backsound),
@@ -277,6 +279,7 @@ function sanitizeSettings(input) {
 }
 
 function safeUrl(value) {
+  if (/^\/(?!\/)[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp|mp3|m4a)$/.test(value ?? "")) return String(value);
   return /^https:\/\//.test(value ?? "") ? String(value).slice(0, 1000) : "";
 }
 
@@ -334,3 +337,4 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 }
 
 export default app;
+export { safeUrl };

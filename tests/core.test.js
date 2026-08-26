@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createSlug, isAllowedOrigin, isValidPhone, isValidSlug, normalizePhone, renderWhatsAppTemplate } from "../server/validation.js";
 import { createSession } from "../server/auth.js";
+import { safeUrl } from "../api/index.js";
 
 test("normalizes Indonesian WhatsApp numbers", () => {
   assert.equal(normalizePhone("0812 3456 7890"), "6281234567890");
@@ -38,4 +39,9 @@ test("accepts deployment and configured origins but rejects foreign origins", ()
   assert.equal(isAllowedOrigin("https://wedding.vercel.app", "https://wedding.vercel.app", "http://localhost:5173"), true);
   assert.equal(isAllowedOrigin("http://localhost:5173", "http://localhost:3000", "http://localhost:5173/"), true);
   assert.equal(isAllowedOrigin("https://attacker.example", "https://wedding.vercel.app", "http://localhost:5173"), false);
+});
+
+test("accepts local media paths without allowing protocol-relative URLs", () => {
+  assert.equal(safeUrl("/photos/couple-cover.webp"), "/photos/couple-cover.webp");
+  assert.equal(safeUrl("//attacker.example/photo.webp"), "");
 });

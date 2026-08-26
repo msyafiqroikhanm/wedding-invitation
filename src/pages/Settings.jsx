@@ -34,7 +34,7 @@ export default function Settings({ settings, setSettings, guests }) {
       const blob = await upload(file.name, file, { access: "public", handleUploadUrl: "/api/uploads" });
       unsavedUploads.current.add(blob.url);
       setForm((current) => {
-        if (target === "heroPhoto" || target === "backsound") return { ...current, [target]: blob.url };
+        if (target === "heroPhoto" || target === "interludePhoto" || target === "backsound") return { ...current, [target]: blob.url };
         if (target.startsWith("profile")) {
           const index = Number(target.slice(-1));
           const profilePhotos = [...current.profilePhotos];
@@ -90,7 +90,7 @@ export default function Settings({ settings, setSettings, guests }) {
         </SettingsSection>)}
 
         <SettingsSection title="Foto dan suara" description="Gunakan foto asli beresolusi baik. Hero portrait akan memberi hasil paling kuat.">
-          <div className="media-grid"><MediaUpload label="Foto utama" value={form.heroPhoto} loading={uploading === "heroPhoto"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "heroPhoto")} onRemove={() => setForm({ ...form, heroPhoto: "" })}/><MediaUpload label="Foto mempelai pertama" value={form.profilePhotos[0]} loading={uploading === "profile0"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "profile0")} onRemove={() => setForm({ ...form, profilePhotos: ["", form.profilePhotos[1]] })}/><MediaUpload label="Foto mempelai kedua" value={form.profilePhotos[1]} loading={uploading === "profile1"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "profile1")} onRemove={() => setForm({ ...form, profilePhotos: [form.profilePhotos[0], ""] })}/></div>
+          <div className="media-grid"><MediaUpload label="Foto utama" value={form.heroPhoto} loading={uploading === "heroPhoto"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "heroPhoto")} onRemove={() => setForm({ ...form, heroPhoto: "" })}/><MediaUpload label="Foto mempelai pertama" value={form.profilePhotos[0]} loading={uploading === "profile0"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "profile0")} onRemove={() => setForm({ ...form, profilePhotos: ["", form.profilePhotos[1]] })}/><MediaUpload label="Foto mempelai kedua" value={form.profilePhotos[1]} loading={uploading === "profile1"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "profile1")} onRemove={() => setForm({ ...form, profilePhotos: [form.profilePhotos[0], ""] })}/><MediaUpload label="Foto jeda editorial" value={form.interludePhoto} loading={uploading === "interludePhoto"} accept="image/jpeg,image/png,image/webp" onFile={(file) => uploadFile(file, "interludePhoto")} onRemove={() => setForm({ ...form, interludePhoto: "" })}/></div>
           <div className="gallery-editor"><div className="subheading"><div><h3>Galeri</h3><p>Maksimal 12 foto.</p></div><UploadButton label={uploading === "gallery" ? "Mengunggah..." : "Tambah foto"} accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploading) || form.gallery.length >= 12} onFile={(file) => uploadFile(file, "gallery")}/></div>{form.gallery.length > 0 && <div className="gallery-thumbs">{form.gallery.map((url, index) => <div key={url}><img src={url} alt={`Galeri ${index + 1}`} /><button type="button" onClick={() => setForm({ ...form, gallery: form.gallery.filter((item) => item !== url) })} aria-label={`Hapus foto ${index + 1}`}><Icon name="close" size={15}/></button></div>)}</div>}</div>
           <div className="audio-upload"><div><Icon name="music"/><div><h3>Backsound</h3><p>MP3 atau M4A, maksimum 15 MB.</p></div></div>{form.backsound ? <div className="audio-current"><audio controls src={form.backsound}/><button type="button" className="text-button danger" onClick={() => setForm({ ...form, backsound: "" })}>Hapus</button></div> : <UploadButton label={uploading === "backsound" ? "Mengunggah..." : "Pilih audio"} accept="audio/mpeg,audio/mp4,audio/x-m4a" disabled={Boolean(uploading)} onFile={(file) => uploadFile(file, "backsound")}/>}</div>
         </SettingsSection>
@@ -110,7 +110,7 @@ export default function Settings({ settings, setSettings, guests }) {
 }
 
 function mediaUrls(value) {
-  return new Set([value?.heroPhoto, value?.backsound, ...(value?.profilePhotos ?? []), ...(value?.gallery ?? [])].filter(Boolean));
+  return new Set([value?.heroPhoto, value?.interludePhoto, value?.backsound, ...(value?.profilePhotos ?? []), ...(value?.gallery ?? [])].filter(Boolean));
 }
 
 function SettingsSection({ title, description, children }) {

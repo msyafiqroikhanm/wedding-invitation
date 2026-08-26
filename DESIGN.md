@@ -1,6 +1,6 @@
 ---
-name: Stillwater Letters
-description: A calm editorial wedding system shaped by pearl paper, mineral pigment, and moving-water lines.
+name: Stillwater Mauve Journal
+description: A quiet editorial wedding system shaped by mauve paper, mountain air, documentary photography, and moving-water lines.
 colors:
   paper: "#fcfcf8"
   pearl: "#f3f5f1"
@@ -13,9 +13,20 @@ colors:
   hairline: "#d8dfdb"
   danger: "#a33e38"
   deep-water: "#405d60"
+  pearl-blush: "#faf5f3"
+  dusty-mauve: "#9a7680"
+  deep-plum: "#563e47"
+  garden-sage: "#8d9886"
+  forest-ink: "#28332c"
+  mountain-mist: "#d7d9d2"
   field-white: "#ffffff"
   inverse-ink: "#edf4ef"
 typography:
+  ceremonial:
+    fontFamily: "Bodoni Moda Variable, Georgia, serif"
+    fontWeight: 400 900
+    lineHeight: 0.9
+    letterSpacing: "-0.035em"
   display:
     fontFamily: "Bricolage Grotesque Variable, sans-serif"
     fontSize: "clamp(4rem, 11vw, 9rem)"
@@ -93,18 +104,18 @@ components:
     height: "48px"
 ---
 
-# Design System: Stillwater Letters
+# Design System: Stillwater Mauve Journal
 
 ## Overview
 
-**Creative North Star: "Stillwater Letters"**
+**Creative North Star: "Stillwater Mauve Journal"**
 
-Stillwater Letters treats the interface as pearl paper lifted from moving water. Mineral pigment, fine concentric lines, documentary photography, low-contrast surfaces, and generous open space create a personal editorial character rather than a stack of decorative wedding cards.
+Stillwater Mauve Journal treats the invitation as a personal photo essay: warm pearl paper, dusty mauve pigment, mountain greens, fine concentric lines, and generous open space. The four primary photographs each have one clear role: cover, two individual portraits, and a full-width outdoor interlude.
 
-The public invitation carries the most expressive scale and motion, while the administration surfaces stay quiet, direct, and structurally legible. Across both, Bricolage Grotesque supplies the human display voice, Onest carries utility copy, and photography remains the emotional focus.
+The public invitation carries the most expressive scale and motion, while administration stays quiet and structurally legible. Bodoni Moda gives the invitation its ceremonial voice, Bricolage Grotesque remains the dashboard display face, Onest carries utility copy, and photography remains the emotional focus.
 
 **Key Characteristics:**
-- Cool pearl and paper surfaces with mineral blue-green emphasis.
+- Warm pearl-blush surfaces with dusty mauve, deep plum, sage, and forest emphasis.
 - Oversized, tightly tracked display typography beside compact utility labels.
 - Hairline dividers and tonal fields instead of boxed card stacks.
 - Concentric and irregular ripple outlines as the recurring signature.
@@ -112,7 +123,7 @@ The public invitation carries the most expressive scale and motion, while the ad
 
 ## Colors
 
-The palette stays cool, mineral, and low in saturation, with pale paper surfaces carrying dark green ink and a single blue-green family providing emphasis.
+The dashboard keeps its cool mineral palette. The invitation uses low-saturation pearl blush, dusty mauve, deep plum, garden sage, mountain mist, and forest ink sampled from the couple's outdoor photographs.
 
 ### Primary
 - **Mineral Pigment:** The main interactive and illustrative accent for outlines, active states, links, and ripple marks.
@@ -135,10 +146,11 @@ The palette stays cool, mineral, and low in saturation, with pale paper surfaces
 
 ## Typography
 
-**Display Font:** Bricolage Grotesque Variable (with sans-serif fallback)
+**Invitation Display Font:** Bodoni Moda Variable (with Georgia and serif fallback)
+**Dashboard Display Font:** Bricolage Grotesque Variable (with sans-serif fallback)
 **Body Font:** Onest Variable (with sans-serif fallback)
 
-**Character:** Bricolage Grotesque gives names, counts, and headings a soft editorial tension through light weights and compressed tracking. Onest keeps forms, navigation, metadata, and instructions immediately readable.
+**Character:** Bodoni Moda gives names and emotional headings a formal editorial cadence. Bricolage Grotesque keeps dashboard hierarchy human and compact. Onest keeps body copy, forms, navigation, metadata, and instructions immediately readable.
 
 ### Hierarchy
 - **Display:** Light variable weights and fluid sizing create the invitation's names and major moments; the largest observed role uses the normative display token.
@@ -148,7 +160,7 @@ The palette stays cool, mineral, and low in saturation, with pale paper surfaces
 - **Label:** Small, bold Onest labels support table headings and metadata; ceremonial eyebrow text adds wide tracking and uppercase treatment only where observed.
 
 ### Named Rules
-**The Two-Voice Rule.** Use Bricolage Grotesque for expressive hierarchy and Onest for reading and operation; do not introduce a third typographic voice.
+**The Role Rule.** Use Bodoni only in the public invitation, Bricolage only for dashboard display hierarchy, and Onest for reading and operation. Never mix both display faces in one surface.
 
 ## Layout
 
@@ -221,4 +233,4 @@ The signature mark is a family of thin concentric mineral outlines. It appears a
 - **Don't** replace the editorial section flow with a generic stack of floral wedding cards.
 - **Don't** add decorative dashboard cards where a line, row, or tonal field already provides structure.
 - **Don't** spread shadows across resting surfaces.
-- **Don't** introduce saturated accent colors or a third font voice into the observed system.
+- **Don't** introduce saturated accents or mix Bodoni and Bricolage on the same surface.

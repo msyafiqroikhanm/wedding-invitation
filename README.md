@@ -10,11 +10,11 @@ A private, mobile-first wedding invitation workspace for one wedding. It combine
 - Exact MongoDB guest lookup before any invitation payload is returned.
 - Prefilled WhatsApp messages and sending timestamps.
 - Two configurable events with dates, times, addresses, and Google Maps links.
-- Couple photography, gallery, backsound, and live invitation preview.
+- Role-based couple photography, editorial interlude, gallery, backsound, and live invitation preview.
 - Countdown with Indonesian time zone support.
 - Digital gift accounts with copy controls.
 - One moderated wish per registered guest.
-- Mobile-first Stillwater Letters invitation design.
+- Mobile-first Stillwater Mauve Journal invitation design.
 
 ## Stack
 
@@ -170,6 +170,8 @@ Browsers require a user gesture. Music starts after the guest presses `Buka unda
 #### Added
 
 - Added guest filtering by connection alongside search and delivery status.
+- Added four optimized local wedding photographs with dedicated cover, portrait, and editorial-interlude roles.
+- Added Bodoni Moda ceremonial typography and the mauve, plum, sage, forest, and mountain-mist invitation palette.
 
 #### Fixed
 

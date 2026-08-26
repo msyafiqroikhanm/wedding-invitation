@@ -51,6 +51,7 @@ export default function Invite() {
       <Couple settings={settings} />
       {settings.events?.[0]?.date && <Countdown event={settings.events[0]} />}
       <Events events={settings.events ?? []} />
+      {settings.interludePhoto && <PhotoInterlude photo={settings.interludePhoto} coupleNames={coupleNames} />}
       {settings.gallery?.length > 0 && <Gallery photos={settings.gallery} />}
       {settings.giftAccounts?.length > 0 && <Gifts accounts={settings.giftAccounts} />}
       <Wishes slug={guest.slug} guestName={guest.name} wishes={wishes} />
@@ -104,6 +105,10 @@ function Events({ events }) {
 
 function Gallery({ photos }) {
   return <section className="invite-gallery"><header><h2>Potongan yang ingin kami simpan.</h2><p>Bukan seluruh perjalanan, hanya beberapa saat yang membawa kami sampai ke sini.</p></header><div>{photos.map((photo, index) => <figure key={photo} className={`gallery-photo gallery-photo-${index % 4}`}><img src={photo} alt={`Momen pasangan ${index + 1}`} loading="lazy" /></figure>)}</div></section>;
+}
+
+function PhotoInterlude({ photo, coupleNames }) {
+  return <figure className="photo-interlude"><img src={photo} alt={`${coupleNames} berjalan bersama di alam terbuka`} loading="lazy"/><figcaption><span>Berjalan ke arah yang sama,</span><strong>bersama.</strong></figcaption></figure>;
 }
 
 function Gifts({ accounts }) {
