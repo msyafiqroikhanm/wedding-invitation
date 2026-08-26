@@ -174,8 +174,8 @@ function Hero({ couple }) {
 
 function Couple({ settings }) {
   const people = [
-    { name: settings.couple.fullNameOne || settings.couple.partnerOne, short: settings.couple.partnerOne, photo: settings.profilePhotos?.[0] },
-    { name: settings.couple.fullNameTwo || settings.couple.partnerTwo, short: settings.couple.partnerTwo, photo: settings.profilePhotos?.[1] },
+    { name: settings.couple.fullNameOne || settings.couple.partnerOne, short: settings.couple.partnerOne, parents: settings.couple.parentsOne, photo: settings.profilePhotos?.[0] },
+    { name: settings.couple.fullNameTwo || settings.couple.partnerTwo, short: settings.couple.partnerTwo, parents: settings.couple.parentsTwo, photo: settings.profilePhotos?.[1] },
   ];
   return <section className="couple-section">
     <div className="couple-intro" data-reveal="">
@@ -184,7 +184,10 @@ function Couple({ settings }) {
     </div>
     <div className="couple-portraits">{people.map((person, index) => <article key={index} data-reveal="">
       <div className="portrait-frame">{person.photo ? <img src={person.photo} alt={`Potret ${person.name}`} loading="lazy"/> : <span>{person.short?.charAt(0)}</span>}</div>
-      <div className="portrait-caption"><h3>{person.short}</h3>{person.name !== person.short && <p>{person.name}</p>}</div>
+      <div className="portrait-meta">
+        <div className="portrait-caption"><h3>{person.short}</h3>{person.name !== person.short && <p>{person.name}</p>}</div>
+        {person.parents && <p className="portrait-parents">{person.parents}</p>}
+      </div>
     </article>)}</div>
   </section>;
 }

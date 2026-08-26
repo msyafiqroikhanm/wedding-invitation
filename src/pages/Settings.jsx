@@ -23,6 +23,14 @@ export default function Settings({ settings, setSettings, guests }) {
     setForm((current) => ({ ...current, events: current.events.map((event, eventIndex) => eventIndex === index ? { ...event, [key]: value } : event) }));
   }
 
+  function addEvent() {
+    setForm((current) => ({ ...current, events: [...current.events, { label: "", date: "", startTime: "", endTime: "", timezone: "Asia/Jakarta", venue: "", address: "", mapsUrl: "", note: "" }] }));
+  }
+
+  function removeEvent(index) {
+    setForm((current) => ({ ...current, events: current.events.filter((_, eventIndex) => eventIndex !== index) }));
+  }
+
   async function uploadFile(file, target) {
     if (!file) return;
     const isAudio = file.type.startsWith("audio/");
@@ -79,14 +87,15 @@ export default function Settings({ settings, setSettings, guests }) {
     {error && <p className="form-error" role="alert">{error}</p>}
     <div className="settings-layout">
       <form className="settings-form" onSubmit={save}>
-        <SettingsSection title="Pasangan" description="Nama pendek menjadi pusat undangan. Nama lengkap muncul pada perkenalan.">
-          <div className="form-grid"><label>Nama pendek pertama<input required value={form.couple.partnerOne} onChange={(event) => updateCouple("partnerOne", event.target.value)} placeholder="Nama panggilan" /></label><label>Nama pendek kedua<input required value={form.couple.partnerTwo} onChange={(event) => updateCouple("partnerTwo", event.target.value)} placeholder="Nama panggilan" /></label><label>Nama lengkap pertama<input value={form.couple.fullNameOne} onChange={(event) => updateCouple("fullNameOne", event.target.value)} placeholder="Nama lengkap" /></label><label>Nama lengkap kedua<input value={form.couple.fullNameTwo} onChange={(event) => updateCouple("fullNameTwo", event.target.value)} placeholder="Nama lengkap" /></label></div>
+        <SettingsSection title="Pasangan" description="Nama pendek menjadi pusat undangan. Nama lengkap dan orang tua muncul pada perkenalan mempelai.">
+          <div className="form-grid"><label>Nama pendek pertama<input required value={form.couple.partnerOne} onChange={(event) => updateCouple("partnerOne", event.target.value)} placeholder="Nama panggilan" /></label><label>Nama pendek kedua<input required value={form.couple.partnerTwo} onChange={(event) => updateCouple("partnerTwo", event.target.value)} placeholder="Nama panggilan" /></label><label>Nama lengkap pertama<input value={form.couple.fullNameOne} onChange={(event) => updateCouple("fullNameOne", event.target.value)} placeholder="Nama lengkap" /></label><label>Nama lengkap kedua<input value={form.couple.fullNameTwo} onChange={(event) => updateCouple("fullNameTwo", event.target.value)} placeholder="Nama lengkap" /></label><label>Orang tua mempelai pertama<input value={form.couple.parentsOne} onChange={(event) => updateCouple("parentsOne", event.target.value)} placeholder="Putri dari Bapak Ahmad & Ibu Siti" /></label><label>Orang tua mempelai kedua<input value={form.couple.parentsTwo} onChange={(event) => updateCouple("parentsTwo", event.target.value)} placeholder="Putra dari Bapak Budi & Ibu Rina" /></label></div>
           <label>Kalimat pembuka<textarea rows="3" value={form.couple.openingText} onChange={(event) => updateCouple("openingText", event.target.value)} placeholder="Tuliskan sapaan singkat dari kalian." /></label>
         </SettingsSection>
 
-        {form.events.map((event, index) => <SettingsSection key={index} title={`Acara ${index + 1}`} description="Tanggal dan lokasi ditampilkan sebagai satu alur, bukan kartu yang terpisah.">
+        {form.events.map((event, index) => <SettingsSection key={index} title={`Acara ${index + 1}`} description="Tanggal dan lokasi ditampilkan sebagai satu alur. Tambahkan satu blok untuk setiap akad atau resepsi.">
           <div className="form-grid"><label>Nama acara<input required value={event.label} onChange={(e) => updateEvent(index, "label", e.target.value)} /></label><label>Tanggal<input type="date" required value={event.date} onChange={(e) => updateEvent(index, "date", e.target.value)} /></label><label>Mulai<input type="time" required value={event.startTime} onChange={(e) => updateEvent(index, "startTime", e.target.value)} /></label><label>Selesai<input type="time" value={event.endTime} onChange={(e) => updateEvent(index, "endTime", e.target.value)} /></label><label>Nama lokasi<input required value={event.venue} onChange={(e) => updateEvent(index, "venue", e.target.value)} /></label><label>Zona waktu<select value={event.timezone} onChange={(e) => updateEvent(index, "timezone", e.target.value)}><option>Asia/Jakarta</option><option>Asia/Makassar</option><option>Asia/Jayapura</option></select></label></div>
-          <label>Alamat<textarea rows="2" value={event.address} onChange={(e) => updateEvent(index, "address", e.target.value)} /></label><label>Link Google Maps<input type="url" value={event.mapsUrl} onChange={(e) => updateEvent(index, "mapsUrl", e.target.value)} placeholder="https://maps.google.com/..." /></label>
+          <label>Alamat<textarea rows="2" value={event.address} onChange={(e) => updateEvent(index, "address", e.target.value)} /></label><label>Link Google Maps<input type="url" value={event.mapsUrl} onChange={(e) => updateEvent(index, "mapsUrl", e.target.value)} placeholder="https://maps.google.com/..." /></label><label>Catatan<input value={event.note} onChange={(e) => updateEvent(index, "note", e.target.value)} placeholder="Mohon hadir tepat waktu." /></label>
+          <div className="event-actions">{form.events.length > 1 && <button type="button" className="text-button danger" onClick={() => removeEvent(index)}>Hapus acara ini</button>}{index === form.events.length - 1 && form.events.length < 5 && <button type="button" className="text-link" onClick={addEvent}><Icon name="plus" size={17}/>Tambah acara</button>}</div>
         </SettingsSection>)}
 
         <SettingsSection title="Foto dan suara" description="Gunakan foto asli beresolusi baik. Hero portrait akan memberi hasil paling kuat.">
@@ -104,7 +113,12 @@ export default function Settings({ settings, setSettings, guests }) {
         <SettingsSection title="Penutup" description="Satu ucapan tulus lebih kuat daripada paragraf yang panjang."><label>Kalimat penutup<textarea rows="4" value={form.couple.closingText} onChange={(event) => updateCouple("closingText", event.target.value)} placeholder="Terima kasih telah menjadi bagian dari hari kami." /></label></SettingsSection>
         <div className="sticky-save"><span>{saving ? "Menyimpan perubahan..." : "Perubahan aktif setelah disimpan."}</span><button className="button button-primary" disabled={saving || Boolean(uploading)}>{saving ? "Menyimpan..." : "Simpan undangan"}</button></div>
       </form>
-      <aside className="phone-preview" aria-label="Preview undangan"><div className="preview-speaker"/><div className="preview-screen" style={form.heroPhoto ? { backgroundImage: `linear-gradient(180deg, rgba(16,28,26,.08), rgba(16,28,26,.72)), url(${form.heroPhoto})` } : {}}><div className="preview-rings"><span/><span/><span/></div><small>Undangan pernikahan</small><h2>{coupleNames}</h2><p>{form.events[0]?.date ? new Intl.DateTimeFormat("id-ID", { dateStyle: "long" }).format(new Date(`${form.events[0].date}T12:00:00`)) : "Tanggal pernikahan"}</p><button type="button">Buka undangan</button></div></aside>
+      <aside className="phone-preview" aria-label="Preview undangan"><div className="preview-speaker"/><div className="preview-screen" style={form.heroPhoto ? { backgroundImage: `linear-gradient(180deg, rgba(39,26,31,.55), rgba(39,26,31,.35) 42%, rgba(39,26,31,.88)), url(${form.heroPhoto})` } : {}}>
+        <div className="preview-rings"><span/><span/><span/></div>
+        <small>Undangan pernikahan</small>
+        <div className="preview-names"><h2>{form.couple.partnerOne && form.couple.partnerTwo ? <>{form.couple.partnerOne}<br /><em>dan</em><br />{form.couple.partnerTwo}</> : coupleNames}</h2><time>{form.events[0]?.date ? form.events[0].date.split("-").reverse().join(" · ") : "Tanggal pernikahan"}</time></div>
+        <div className="preview-guest"><em>Kepada Yth.</em><strong>{sampleGuest?.name || "Nama tamu"}</strong><button type="button">Buka undangan<span aria-hidden="true"><Icon name="arrow" size={14}/></span></button></div>
+      </div></aside>
     </div>
   </div>;
 }

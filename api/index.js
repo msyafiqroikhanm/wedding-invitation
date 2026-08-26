@@ -233,7 +233,7 @@ app.use((error, _req, res, _next) => {
 function defaultSettings() {
   return {
     _id: "main",
-    couple: { partnerOne: "", partnerTwo: "", fullNameOne: "", fullNameTwo: "", openingText: "", closingText: "" },
+    couple: { partnerOne: "", partnerTwo: "", fullNameOne: "", fullNameTwo: "", parentsOne: "", parentsTwo: "", openingText: "", closingText: "" },
     events: [emptyEvent("Akad"), emptyEvent("Resepsi")],
     heroPhoto: "",
     interludePhoto: "",
@@ -252,8 +252,8 @@ function emptyEvent(label) {
 function sanitizeSettings(input) {
   const fallback = defaultSettings();
   const couple = input.couple ?? {};
-  const events = Array.from({ length: 2 }, (_, index) => {
-    const event = input.events?.[index] ?? fallback.events[index];
+  const source = Array.isArray(input.events) && input.events.length ? input.events.slice(0, 5) : fallback.events;
+  const events = source.map((event) => {
     return {
       label: cleanText(event.label, 60), date: cleanText(event.date, 10), startTime: cleanText(event.startTime, 5), endTime: cleanText(event.endTime, 5),
       timezone: cleanText(event.timezone, 40) || "Asia/Jakarta", venue: cleanText(event.venue, 120), address: cleanText(event.address, 300),
@@ -263,7 +263,8 @@ function sanitizeSettings(input) {
   return {
     couple: {
       partnerOne: cleanText(couple.partnerOne, 80), partnerTwo: cleanText(couple.partnerTwo, 80), fullNameOne: cleanText(couple.fullNameOne, 120),
-      fullNameTwo: cleanText(couple.fullNameTwo, 120), openingText: cleanText(couple.openingText, 500), closingText: cleanText(couple.closingText, 500),
+      fullNameTwo: cleanText(couple.fullNameTwo, 120), parentsOne: cleanText(couple.parentsOne, 200), parentsTwo: cleanText(couple.parentsTwo, 200),
+      openingText: cleanText(couple.openingText, 500), closingText: cleanText(couple.closingText, 500),
     },
     events,
     heroPhoto: safeUrl(input.heroPhoto),
