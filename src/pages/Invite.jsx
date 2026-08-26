@@ -84,7 +84,7 @@ function Couple({ settings }) {
     { name: settings.couple.fullNameOne || settings.couple.partnerOne, short: settings.couple.partnerOne, photo: settings.profilePhotos?.[0] },
     { name: settings.couple.fullNameTwo || settings.couple.partnerTwo, short: settings.couple.partnerTwo, photo: settings.profilePhotos?.[1] },
   ];
-  return <section className="couple-section"><div className="couple-intro"><h2>Dua cerita, satu perjalanan.</h2><p>Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p></div><div className="couple-portraits">{people.map((person, index) => <article key={index} className={index ? "portrait-lower" : ""}><div className="portrait-frame">{person.photo ? <img src={person.photo} alt={`Potret ${person.name}`} loading="lazy"/> : <span>{person.short?.charAt(0)}</span>}</div><h3>{person.name}</h3></article>)}</div></section>;
+  return <section className="couple-section"><div className="couple-intro"><h2>Dua cerita, satu perjalanan.</h2><p>Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p></div><div className="couple-portraits">{people.map((person, index) => <article key={index} className={index ? "portrait-lower" : ""}><div className="portrait-frame">{person.photo ? <img src={person.photo} alt={`Potret ${person.name}`} loading="lazy"/> : <span>{person.short?.charAt(0)}</span>}</div><div className="portrait-caption"><Icon name="spark" size={16}/><div><h3>{person.short}</h3>{person.name !== person.short && <p>{person.name}</p>}</div></div></article>)}</div></section>;
 }
 
 function Countdown({ event }) {
