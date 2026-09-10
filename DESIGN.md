@@ -1,6 +1,6 @@
 ---
-name: Stillwater Mauve Journal
-description: A quiet editorial wedding system shaped by mauve paper, mountain air, documentary photography, and moving-water lines.
+name: Album Biru / Stillwater Administration
+description: A mineral-blue photographic invitation album alongside a calm pearl-and-mineral dashboard.
 colors:
   paper: "#fcfcf8"
   pearl: "#f3f5f1"
@@ -13,26 +13,27 @@ colors:
   hairline: "#d8dfdb"
   danger: "#a33e38"
   deep-water: "#405d60"
-  pearl-blush: "#faf5f3"
-  dusty-mauve: "#9a7680"
-  deep-plum: "#563e47"
-  garden-sage: "#8d9886"
-  forest-ink: "#28332c"
-  mountain-mist: "#d7d9d2"
   field-white: "#ffffff"
-  inverse-ink: "#edf4ef"
+  album-paper: "#f7f8f4"
+  album-pearl: "#e7eded"
+  album-ink: "#243d46"
+  album-muted: "#52686d"
+  album-mineral: "#6e8c96"
+  album-blue: "#264b5a"
+  album-sage: "#aab5a4"
+  album-line: "#cbd6d6"
+  album-mount: "#f4f6ef"
+  album-inverse-muted: "#d6e2e4"
+  album-gallery: "#dfe5da"
+  album-surround: "#dbe3e4"
+  album-focus: "#92b7c4"
 typography:
-  ceremonial:
-    fontFamily: "Playfair Display, Georgia, serif"
-    fontWeight: 400 900
-    lineHeight: 0.9
-    letterSpacing: "-0.035em"
   display:
-    fontFamily: "Bricolage Grotesque Variable, sans-serif"
-    fontSize: "clamp(4rem, 11vw, 9rem)"
-    fontWeight: 350
-    lineHeight: 0.85
-    letterSpacing: "-0.065em"
+    fontFamily: "Bodoni Moda Variable, Georgia, serif"
+    fontSize: "clamp(3.8rem, 6.6vw, 6rem)"
+    fontWeight: 500
+    lineHeight: 1.05
+    letterSpacing: "-0.04em"
   headline:
     fontFamily: "Bricolage Grotesque Variable, sans-serif"
     fontSize: "clamp(2rem, 3.4vw, 3.4rem)"
@@ -50,10 +51,10 @@ typography:
     fontSize: "0.73rem"
     fontWeight: 700
 rounded:
+  album-control: "3px"
   status: "4px"
   compact: "7px"
   control: "8px"
-  pill: "30px"
   circle: "50%"
 spacing:
   xs: "4px"
@@ -65,7 +66,6 @@ components:
   button-primary:
     backgroundColor: "{colors.mineral-dark}"
     textColor: "{colors.field-white}"
-    typography: "{typography.body}"
     rounded: "{rounded.control}"
     padding: "0 18px"
     height: "44px"
@@ -74,14 +74,12 @@ components:
   button-secondary:
     backgroundColor: "transparent"
     textColor: "{colors.ink}"
-    typography: "{typography.body}"
     rounded: "{rounded.control}"
     padding: "0 18px"
     height: "44px"
   input:
     backgroundColor: "{colors.field-white}"
     textColor: "{colors.ink}"
-    typography: "{typography.body}"
     rounded: "{rounded.compact}"
     padding: "12px 13px"
     height: "46px"
@@ -91,146 +89,96 @@ components:
     rounded: "{rounded.compact}"
     padding: "0 13px"
     height: "46px"
-  status:
-    typography: "{typography.label}"
-    rounded: "{rounded.status}"
-    padding: "5px 8px"
   invitation-action:
     backgroundColor: "transparent"
-    textColor: "{colors.mineral-dark}"
-    typography: "{typography.body}"
-    rounded: "{rounded.pill}"
-    padding: "0 18px"
-    height: "48px"
+    textColor: "{colors.album-blue}"
+    rounded: "{rounded.album-control}"
+    padding: "0 22px"
+    height: "52px"
+  invitation-open:
+    backgroundColor: "{colors.album-mount}"
+    textColor: "{colors.album-blue}"
+    rounded: "{rounded.album-control}"
+    padding: "0 10px 0 22px"
+    height: "54px"
 ---
 
-# Design System: Stillwater Mauve Journal
+# Design System: Album Biru / Stillwater Administration
 
 ## Overview
 
-**Creative North Star: "Stillwater Mauve Journal"**
+**Creative North Star: "Album Biru"**
 
-Stillwater Mauve Journal treats the invitation as a personal photo essay: warm pearl paper, dusty mauve pigment, mountain greens, fine concentric lines, and generous open space. The four primary photographs each have one clear role: cover, two individual portraits, and a full-width outdoor interlude.
+The public invitation is a photographic keepsake: deep mineral-blue cloth-like fields, pearl album mounts, sage leaves, Bodoni names, and quiet ripple signatures. Light interior pages support daylight phone reading; real photography carries emotion. This records the implemented direction 4, seed `369ba90e`, committed in `index.html`.
 
-The public invitation carries the most expressive scale and motion, while administration stays quiet and structurally legible. Playfair Display gives the invitation its ceremonial voice, Bricolage Grotesque remains the dashboard display face, Onest carries utility copy, and photography remains the emotional focus.
+Administration retains its calm Stillwater system: cool pearl, mineral actions, compact Bricolage headings, and Onest utility copy. `PRODUCT.md` supplies durable accessibility and personal/editorial commitments; its earlier Stillwater Letters direction is not the current guest palette. Surface strategy lives in `.impeccable/surfaces/src-pages-invite-jsx.md`.
 
 **Key Characteristics:**
-- Warm pearl-blush surfaces with dusty mauve, deep plum, sage, and forest emphasis.
-- Oversized, tightly tracked display typography beside compact utility labels.
-- Hairline dividers and tonal fields instead of boxed card stacks.
-- Concentric and irregular ripple outlines as the recurring signature.
-- Restrained motion that opens, drifts, or pulses like disturbed water.
+- Mounted rectangular photography, open page rhythm, and fine dividing lines.
+- Expressive Bodoni guest typography; compact, immediately legible administration.
+- Restrained blue/sage tonal fields and purposeful, reduced-motion-aware transitions.
 
 ## Colors
 
-The dashboard keeps its cool mineral palette. The invitation uses low-saturation pearl blush, dusty mauve, deep plum, garden sage, mountain mist, and forest ink sampled from the couple's outdoor photographs.
-
 ### Primary
-- **Mineral Pigment:** The main interactive and illustrative accent for outlines, active states, links, and ripple marks.
-- **Deep Mineral:** The high-contrast action color for primary buttons, active navigation, and dark editorial fields.
+- **Album Blue / Album Mineral:** Dark cover, countdown, wishes, action text, and quieter ripple/border accents respectively. `album-*` tokens apply to guest output and override the root mineral palette locally.
+- **Deep Mineral / Mineral Pigment:** Dashboard primary actions, active navigation, links, and supporting marks. Deep-water remains the dashboard next-action field; mineral-deep is primary hover.
 
 ### Secondary
-- **Mist Wash:** A pale blue-green fill for badges, avatars, and quiet selected details.
+- **Album Sage / Album Gallery:** Portrait fallback and photographic interlude ground; gallery leaf field.
+- **Mist:** Dashboard badge and quiet supporting fill.
 
 ### Neutral
-- **Pearl Ground:** The default application canvas and page background.
-- **Paper White:** The warmer elevated surface used for forms, sheets, and login structure.
-- **Ink:** The default text color, softened by muted ink for explanations and metadata.
-- **Hairline:** The divider color that organizes lists and sections without card chrome.
-- **Field White:** The clean input and selected-control surface.
-- **Inverse Ink:** The cool pale text used over deep-water fields.
-- **Danger:** A restrained red reserved for destructive actions and validation feedback.
+- **Album Paper / Pearl / Mount:** Interior pages, opening-letter field and account panels, then cover print and opening action. Album surround fills the viewport outside the centered invitation.
+- **Album Ink / Muted / Inverse Muted / Line:** Reading text, supporting copy, pale copy on blue, and fine structural borders. Album focus is the keyboard outline.
+- **Paper / Pearl / Ink / Muted Ink / Hairline / Field White:** Dashboard forms, canvas, text hierarchy, dividers, and fields. Danger is reserved for destructive actions and errors.
 
-### Named Rules
-**The Mineral Restraint Rule.** Deep mineral marks the active path and major editorial fields; it does not flood every control.
+**The Surface Boundary Rule.** Unprefixed tokens describe administration; album tokens describe the guest invitation. The admin phone mockup still uses legacy mauve (`#45303a`) and Playfair Display: it is not an accurate preview of Album Biru.
 
 ## Typography
 
-**Invitation Display Font:** Playfair Display (with Georgia and serif fallback)
-**Dashboard Display Font:** Bricolage Grotesque Variable (with sans-serif fallback)
-**Body Font:** Onest Variable (with sans-serif fallback)
+Guest display uses **Bodoni Moda Variable, Georgia, serif**, imported by `src/pages/Invite.jsx`; body and controls use **Onest Variable, sans-serif**. Dashboard headings use **Bricolage Grotesque Variable, sans-serif**. `index.html` still loads Playfair for the legacy preview; that load does not define guest typography.
 
-**Character:** Playfair Display gives names and emotional headings a formal editorial cadence. Bricolage Grotesque keeps dashboard hierarchy human and compact. Onest keeps body copy, forms, navigation, metadata, and instructions immediately readable.
-
-### Hierarchy
-- **Display:** Light variable weights and fluid sizing create the invitation's names and major moments; the largest observed role uses the normative display token.
-- **Headline:** A medium variable weight with compact leading identifies dashboard pages and major administrative actions.
-- **Title:** A firm compact display face labels sections, list groups, and smaller content moments.
-- **Body:** Onest carries all operational copy, form content, and supporting invitation text, commonly with relaxed line-height for passages.
-- **Label:** Small, bold Onest labels support table headings and metadata; ceremonial eyebrow text adds wide tracking and uppercase treatment only where observed.
-
-### Named Rules
-**The Role Rule.** Use Playfair Display only in the public invitation, Bricolage only for dashboard display hierarchy, and Onest for reading and operation. Never mix both display faces in one surface.
+- **Guest display:** The normative display token describes desktop cover names. Interior names use weight 500, `clamp(3.2rem, 6vw, 5rem)` and 1.1 leading; section headings use roughly 2.3–4rem fluid scales, 1.1–1.2 leading, and tight tracking. Ampersands are smaller and italic.
+- **Guest reading:** Onest passages use roughly .9–1rem with 1.7–1.95 leading; short supporting passages commonly stop at 32–40ch. Approved wishes use Bodoni at 1.3rem/1.65. Dates and account numbers use tabular numerals where implemented.
+- **Dashboard:** Headline/title tokens preserve page and section hierarchy; label describes table metadata. Status chips use .72rem/700. Login display uses weight 350, `clamp(3rem, 5.8vw, 6rem)` and .98 leading.
+- **Phone cover (≤700px):** Names wrap along a shared baseline at `clamp(2rem, 8.8vw, 2.7rem)` with 1.2 leading; interior hero names use 3.8rem. Long guest names and headings wrap rather than clip.
 
 ## Layout
 
-The invitation uses full-width tonal chapters around centered reading widths, with editorial asymmetry in portraits and a 12-column photographic gallery. Major invitation sections use fluid vertical padding and long pauses; hairline-separated event and account rows preserve continuity instead of becoming isolated cards.
+Guest pages are centered at a maximum 1200px on the album surround; the fixed cover spans the viewport with an inner maximum 1100px. Desktop uses paired columns, staggered portraits, spacious 8–12% gutters, and approximately 96–112px chapter padding. Events auto-fit from 270px columns. The gallery is a horizontal scroll-snap strip, not a 12-column grid: prints occupy 36% with a 240px minimum.
 
-The dashboard uses a sticky 252px sidebar beside a centered 1240px work area. Settings pair a 760px form column with a 300px phone preview. At 1050px, dense guest rows become a two-column card-like grid and the phone preview disappears. At 760px, the sidebar becomes a fixed 72px bottom navigation, dashboard grids collapse, and invitation spacing tightens. At 430px, media and account controls reduce again for narrow phones.
+At 700px, the cover stacks names, print, and dedication; the print caps at 290px. Interior columns collapse, portraits alternate alignment at 88% width, gutters become 28–30px, and gallery prints occupy 84%. Safe-area padding protects fixed controls. The closing page reserves bottom space for navigation.
 
-Recurring compact spacing steps are 4px, 8px, 12px, 18px, and 24px. Larger composition gaps are contextual and fluid rather than forced onto that compact control rhythm.
+Dashboard: sticky 252px sidebar, centered 1240px work area, settings columns of up to 760px plus a 300px preview. At 1050px, guest rows become two-column cards and the preview hides. At 760px, grids collapse and a fixed 72px bottom navigation replaces the sidebar; at 430px, media/account controls tighten. Compact spacing follows the frontmatter scale; editorial gaps remain contextual.
 
 ## Elevation & Depth
 
-The system is flat by default. Depth comes first from pearl-to-paper tonal shifts, dark-water chapter fields, photography, borders, and sticky positioning. Soft green-black shadows appear only on temporary, floating, selected, or device-preview surfaces.
+Flat pages, tonal chapters, borders, and photography provide most depth. Guest print mounts and floating navigation are deliberate physical-object exceptions; dashboard shadows remain reserved for selected, floating, and overlay surfaces.
 
-### Shadow Vocabulary
-- **Selected Control** (`box-shadow: 0 2px 7px rgba(39,54,49,.08)`): Lifts the active segment by one quiet layer.
-- **Floating Notice** (`box-shadow: 0 10px 30px rgba(40,55,50,.12)`): Separates transient feedback from the page.
-- **Overlay Sheet** (`box-shadow: -15px 0 50px rgba(26,40,35,.14)`): Establishes the side sheet above its backdrop.
-- **Device Preview** (`box-shadow: 0 24px 55px rgba(32,45,41,.18)`): Gives the physical phone mockup its strongest structural depth.
-
-### Named Rules
-**The Flat-by-Default Rule.** Lists, sections, and resting controls use lines and tonal layering; shadows are reserved for state, overlay, or physical-object cues.
+- **Album print:** `0 16px 40px #102c3a33`; **guest navigation:** `0 8px 32px #16354426`.
+- **Selected segment:** `0 2px 7px rgba(39,54,49,.08)`; **toast:** `0 10px 30px rgba(40,55,50,.12)`.
+- **Side sheet:** `-15px 0 50px rgba(26,40,35,.14)`; **phone preview:** `0 24px 55px rgba(32,45,41,.18)`.
 
 ## Shapes
 
-Administrative controls use gently compact corners, with 7px fields and navigation, 8px buttons and segmented containers, and 4px status chips. Public invitation actions become 30px to 40px pills. Avatars, icon controls, loaders, and marks use circles.
-
-Photography remains rectangular and edge-clean. The signature exception is the family of concentric ripple outlines, whose ellipses and irregular radii shift slightly between rings to suggest floated pigment rather than perfect geometry.
+Album photography is rectangular with square mounts, including 4:5 portraits and gallery images; the cover print rotates 2deg. Guest actions use compact album-control corners, navigation uses 4px, and the music control remains circular. Ripple ellipses accent selected moments rather than surrounding every photograph. Dashboard fields/navigation retain compact corners, buttons use control corners, and chips use status corners; legacy preview pills are not guest action rules.
 
 ## Components
 
-### Buttons
-- **Shape:** Administrative buttons use a compact 8px radius and a minimum 44px touch height; invitation actions use open 30px to 40px pills.
-- **Primary:** Deep mineral fill, white text, semibold body type, and 18px horizontal padding.
-- **Hover / Focus:** Hover darkens the mineral fill and lifts by 1px over 180ms ease. Keyboard focus uses a 3px translucent mineral outline with 2px offset.
-- **Secondary / Ghost:** Secondary actions use a transparent field with a pale green border; text and icon actions remove the container and rely on underline or deep-mineral text.
-
-### Chips
-- **Style:** Status chips are compact 4px rectangles with bold small labels. Unsent uses warm sand; sent uses pale green with dark green text.
-- **State:** Segmented filters sit in an 8px outlined track; the active 5px segment turns white and gains the selected-control shadow.
-
-### Cards / Containers
-- **Corner Style:** Core content remains square and section-like; compact corners belong to transient menus, fields, and controls.
-- **Background:** Pearl and paper carry most content, while deep-water fields mark major next actions and invitation chapters.
-- **Shadow Strategy:** Resting sections are flat; overlays and sticky surfaces use the elevation vocabulary.
-- **Border:** One-pixel hairlines separate rows and sections.
-- **Internal Padding:** Dense controls use the compact spacing scale; editorial fields use fluid padding tied to viewport width.
-
-### Inputs / Fields
-- **Style:** White fields use a 1px cool gray-green stroke, 7px corners, and 12px by 13px internal padding. Inputs and selects maintain a 46px minimum height.
-- **Focus:** The shared 3px translucent mineral focus outline sits 2px outside the field.
-- **Error / Disabled:** Errors use dark red text on a pale red field with a red-tinted border; disabled controls reduce opacity and suppress lift.
-
-### Navigation
-
-Desktop navigation is a quiet vertical list on a pale sage-gray sidebar. Links use 46px rows and compact corners; hover introduces a translucent white wash and active state becomes deep mineral with white text. Below 760px, navigation becomes a fixed, blurred bottom bar with four equal destinations and text-supported icons.
-
-### Ripple Mark
-
-The signature mark is a family of thin concentric mineral outlines. It appears as a circular loader, an elliptical empty-state and gift mark, irregular hero rings, and large cover pigment contours; repeated rings vary their inset, rotation, or curvature rather than becoming a logo stamp.
+- **Dashboard buttons and fields:** Primary buttons use mineral fill, white text, weight 650, and minimum 44px height; secondary buttons use transparent fill and a pale green border. Hover lifts 1px over 180ms and primary fill darkens. Fields have a cool gray-green 1px stroke and minimum 46px height for inputs/selects. Focus is a 3px translucent mineral outline, offset 2px; errors use red-tinted fields and disabled buttons suppress lift.
+- **Dashboard status/navigation:** Sand means unsent; pale green means sent, both with text. Segmented filters use an outlined 8px track and white selected segment. Sidebar rows are minimum 46px; active rows use mineral/white, hover a white wash. Mobile navigation retains four labeled destinations. Core lists use hairlines rather than decorative cards.
+- **Guest actions:** Opening uses a pale filled minimum 54px button; maps use 50px outlined actions, gift reveal 52px, account copy 46px, and wish submit 48px. Hover applies brightness .94; opening presses scale .97; disabled guest buttons show reduced opacity and a waiting cursor.
+- **Guest focus:** Preserve `.invitation :is(button, a, textarea):focus-visible`: a 3px album-focus outline with 5px offset, including the wishes textarea on blue.
+- **Gallery and navigation:** The labeled, keyboard-focusable native scroll region contains numbered mounted prints. Fixed bottom navigation caps at 420px and uses labeled minimum 50px links; optional destinations follow actual content. A separate 44px music control appears only with audio.
+- **Gifts and wishes:** Gift details expand with inert/hidden closed content, selectable account numbers, copy confirmation, and failure guidance. Wishes use a transparent, square, bottom-bordered textarea on blue, a character count, submission status, and moderated published quotes.
+- **Opening and motion:** Closed content/navigation are inert and hidden; opening transfers focus to the interior heading and attempts audio only on that action. Cover exit fades over .8s and moves over 1s; scroll reveals rise 20px with .9–1s easing, interlude parallax is subtle, and gift expansion takes .45s. Reduced motion disables parallax/reveal preparation and minimizes CSS motion.
+- **Loading and unavailable states:** Keep explanatory Indonesian text and restrained ripple marks. Error/not-ready headings use Bodoni; the loading screen retains the shared root loader. Missing media uses initials or omits optional sections, without fabricated personal details.
 
 ## Do's and Don'ts
 
-### Do:
-- **Do** let pearl space, hairlines, and typography establish hierarchy before adding containers.
-- **Do** keep public actions comfortable at phone scale with at least the observed 44px touch target.
-- **Do** use ripple outlines as restrained structural accents and motion cues.
-- **Do** let real photography carry the invitation's emotion.
-
-### Don't:
-- **Don't** replace the editorial section flow with a generic stack of floral wedding cards.
-- **Don't** add decorative dashboard cards where a line, row, or tonal field already provides structure.
-- **Don't** spread shadows across resting surfaces.
-- **Don't** introduce saturated accents or mix Playfair Display and Bricolage on the same surface.
+- **Do** preserve the blue cover/light-page distinction, mounted photography, and reading-first hierarchy.
+- **Do** keep visible keyboard focus, comfortable phone targets, controllable audio, reduced motion, and text-supported feedback.
+- **Do** preserve dashboard mineral/Bricolage rules and treat the legacy phone mockup as a separate surface.
+- **Don't** restore mauve/Playfair, pill actions, full-screen text-over-photo covers, or the obsolete grid gallery in guest output.
+- **Don't** turn every chapter into a card, add shadows to resting lists, or duplicate page strategy as a global design rule.

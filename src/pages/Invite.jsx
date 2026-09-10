@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../lib/api.js";
 import Icon from "../components/Icon.jsx";
+import "@fontsource-variable/bodoni-moda";
 
 export default function Invite() {
   const { slug } = useParams();
@@ -23,8 +24,8 @@ export default function Invite() {
   }, [slug]);
 
   useEffect(() => {
-    document.documentElement.style.background = "#ece6e3";
-    document.body.style.background = "#ece6e3";
+    document.documentElement.style.background = "#dbe3e4";
+    document.body.style.background = "#dbe3e4";
     return () => {
       document.documentElement.style.background = "";
       document.body.style.background = "";
@@ -35,6 +36,10 @@ export default function Invite() {
     if (opened) return;
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
+  }, [opened]);
+
+  useEffect(() => {
+    if (opened) rootRef.current?.querySelector(".hero-title h2")?.focus({ preventScroll: true });
   }, [opened]);
 
   // Reveal on scroll + parallax. Initial hidden state is set from JS so the content
@@ -80,7 +85,7 @@ export default function Invite() {
     function onScroll() {
       sweep();
       const photo = root.querySelector(".photo-interlude img");
-      if (!photo) return;
+      if (!photo || reduce) return;
       const box = photo.parentElement.getBoundingClientRect();
       if (box.bottom <= 0 || box.top >= window.innerHeight) return;
       const progress = (window.innerHeight - box.top) / (window.innerHeight + box.height);
@@ -106,7 +111,7 @@ export default function Invite() {
 
   async function toggleMusic() {
     if (!audioRef.current) return;
-    if (audioRef.current.paused) { await audioRef.current.play(); setPlaying(true); }
+    if (audioRef.current.paused) { try { await audioRef.current.play(); setPlaying(true); } catch { setPlaying(false); } }
     else { audioRef.current.pause(); setPlaying(false); }
   }
 
@@ -120,10 +125,10 @@ export default function Invite() {
 
   return <main ref={rootRef} className={`invitation ${opened ? "invitation-open" : "invitation-closed"}`}>
     {settings.backsound && <audio ref={audioRef} src={settings.backsound} loop preload="none" />}
-    <Cover guest={guest} settings={settings} couple={couple} onOpen={openInvitation} />
-    <div className="invitation-content" aria-hidden={!opened}>
+    <Cover guest={guest} settings={settings} couple={couple} onOpen={openInvitation} opened={opened} />
+    <div className="invitation-content" aria-hidden={!opened} inert={!opened}>
       {settings.backsound && <button className="music-control" onClick={toggleMusic} aria-label={playing ? "Jeda musik" : "Putar musik"}><i className={playing ? "playing" : ""} aria-hidden="true"><b/><b/><b/></i></button>}
-      <Hero couple={couple} />
+      <Hero couple={couple} date={settings.events?.[0]?.date} />
       <Couple settings={settings} />
       {settings.events?.[0]?.date && <Countdown event={settings.events[0]} />}
       <Events events={settings.events ?? []} />
@@ -133,27 +138,27 @@ export default function Invite() {
       <Wishes slug={guest.slug} guestName={guest.name} wishes={wishes} />
       <footer className="invitation-close"><RippleMark/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
     </div>
-    <nav className="invite-nav" aria-label="Bagian undangan" aria-hidden={!opened}>
-      <a href="#pembuka">Mempelai</a>
-      <a href="#acara">Acara</a>
-      <a href="#galeri">Galeri</a>
-      <a href="#ucapan">Ucapan</a>
+    <nav className="invite-nav" aria-label="Bagian undangan" aria-hidden={!opened} inert={!opened}>
+      <a href="#mempelai"><Icon name="guests" size={18}/>Mempelai</a>
+      {settings.events?.some((event) => event.date || event.venue) && <a href="#acara"><Icon name="calendar" size={18}/>Acara</a>}
+      {settings.gallery?.length > 0 && <a href="#galeri"><Icon name="spark" size={18}/>Galeri</a>}
+      <a href="#ucapan"><Icon name="wishes" size={18}/>Ucapan</a>
     </nav>
   </main>;
 }
 
-function Cover({ guest, settings, couple, onOpen }) {
+function Cover({ guest, settings, couple, onOpen, opened }) {
   const date = settings.events?.[0]?.date;
-  return <section className="invitation-cover" style={settings.heroPhoto ? { "--cover-image": `url(${settings.heroPhoto})` } : {}}>
-    <div className="cover-photo" aria-hidden="true" />
-    <div className="cover-scrim" aria-hidden="true" />
-    <div className="cover-pigment" aria-hidden="true"><span/><span/><span/></div>
+  return <section className="invitation-cover" aria-hidden={opened} inert={opened}>
     <div className="cover-copy">
-      <p>Undangan pernikahan</p>
       <div className="cover-names">
-        <h1><CoupleTitle couple={couple} separator="dan" /></h1>
-        {date && <time dateTime={date}>{formatDotted(date)}</time>}
+        <h1><CoupleTitle couple={couple} /></h1>
+        <p>Undangan pernikahan{date && <> · <time dateTime={date}>{formatDotted(date)}</time></>}</p>
       </div>
+      <figure className="cover-photo">
+        {settings.heroPhoto ? <img src={settings.heroPhoto} alt={`${couple.partnerOne} dan ${couple.partnerTwo}`} fetchPriority="high"/> : <span className="cover-monogram" aria-hidden="true">{couple.partnerOne?.charAt(0)}<em>&</em>{couple.partnerTwo?.charAt(0)}</span>}
+        <figcaption>Sebuah awal, untuk selamanya.</figcaption>
+      </figure>
       <div className="guest-address">
         <small>Kepada Yth.</small>
         <strong>{guest.name}</strong>
@@ -163,12 +168,10 @@ function Cover({ guest, settings, couple, onOpen }) {
   </section>;
 }
 
-function Hero({ couple }) {
+function Hero({ couple, date }) {
   return <section className="invite-hero" id="pembuka">
-    <div className="hero-ripple" aria-hidden="true"><span/><span/><span/></div>
-    <p data-reveal="">{couple.openingText || "Dengan penuh kebahagiaan, kami mengundang Anda untuk hadir dan menjadi bagian dari hari pernikahan kami."}</p>
-    <h1 data-reveal="" data-delay="110"><CoupleTitle couple={couple} /></h1>
-    <span className="hero-line" data-reveal="" data-delay="240" aria-hidden="true"/>
+    <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { day: "numeric", month: "long", year: "numeric" })}</time>}</div>
+    <div className="hero-letter" data-reveal=""><p>{couple.openingText || "Dengan penuh kebahagiaan, kami mengundang Anda untuk hadir dan menjadi bagian dari hari pernikahan kami."}</p><a href="#mempelai">Mengenal mempelai <Icon name="arrow" size={16}/></a></div>
   </section>;
 }
 
@@ -177,7 +180,7 @@ function Couple({ settings }) {
     { name: settings.couple.fullNameOne || settings.couple.partnerOne, short: settings.couple.partnerOne, parents: settings.couple.parentsOne, photo: settings.profilePhotos?.[0] },
     { name: settings.couple.fullNameTwo || settings.couple.partnerTwo, short: settings.couple.partnerTwo, parents: settings.couple.parentsTwo, photo: settings.profilePhotos?.[1] },
   ];
-  return <section className="couple-section">
+  return <section className="couple-section" id="mempelai">
     <div className="couple-intro" data-reveal="">
       <h2>Dua cerita,<br />satu perjalanan.</h2>
       <p>Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p>
@@ -208,7 +211,7 @@ function Events({ events }) {
   return <section className="events-section" id="acara">
     <header data-reveal="">
       <h2>Tempat kita bertemu</h2>
-      <p>Dua momen dalam satu hari yang ingin kami bagikan bersama Anda.</p>
+      <p>Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini.</p>
     </header>
     <div className="event-flow">{visible.map((event, index) => <article key={index} data-reveal="">
       <div className="event-date">
@@ -222,7 +225,7 @@ function Events({ events }) {
       <p className="event-time">{event.startTime || "--:--"}{event.endTime ? ` – ${event.endTime}` : ""}</p>
       <div className="event-place"><strong>{event.venue}</strong><p>{event.address}</p></div>
       {event.note && <small>{event.note}</small>}
-      {event.mapsUrl && <a href={event.mapsUrl} target="_blank" rel="noreferrer">Buka Google Maps</a>}
+      {event.mapsUrl && <a href={event.mapsUrl} target="_blank" rel="noreferrer"><Icon name="map" size={18}/>Buka Google Maps<Icon name="arrow" size={16}/></a>}
     </article>)}</div>
   </section>;
 }
@@ -240,29 +243,23 @@ function Gallery({ photos }) {
       <h2>Potongan yang ingin kami simpan.</h2>
       <p>Beberapa saat yang membawa kami sampai ke sini.</p>
     </header>
-    <div className="gallery-strip" data-reveal="">{photos.map((photo, index) => <figure key={photo} className="gallery-photo"><img src={photo} alt={`Momen pasangan ${index + 1}`} loading="lazy" /></figure>)}</div>
-    {photos.length > 1 && <p className="gallery-hint">Geser untuk melihat →</p>}
+    <div className="gallery-strip" data-reveal="" tabIndex="0" role="region" aria-label="Galeri foto, geser atau gunakan tombol panah">{photos.map((photo, index) => <figure key={`${photo}-${index}`} className="gallery-photo"><img src={photo} alt={`Momen pasangan ${index + 1}`} loading="lazy" /><figcaption>{String(index + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}</figcaption></figure>)}</div>
+    {photos.length > 1 && <p className="gallery-hint">Geser untuk melihat <Icon name="arrow" size={14}/></p>}
   </section>;
 }
 
 function Gifts({ accounts }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState("");
-  const panelRef = useRef(null);
+  const [copyError, setCopyError] = useState("");
 
-  useEffect(() => {
-    const panel = panelRef.current;
-    if (!panel) return;
-    panel.style.maxHeight = open ? `${panel.scrollHeight + 40}px` : "0px";
-    panel.style.opacity = open ? "1" : "0";
-  }, [open]);
-
-  function copy(account) {
-    // Not awaited: writeText can stay pending when the page is unfocused, and the
-    // confirmation must not wait on it. The number stays on screen either way.
-    navigator.clipboard?.writeText(account.number)?.catch(() => {});
-    setCopied(account.number);
-    window.setTimeout(() => setCopied(""), 1800);
+  async function copy(account) {
+    setCopyError("");
+    try {
+      await navigator.clipboard.writeText(account.number);
+      setCopied(account.number);
+      window.setTimeout(() => setCopied(""), 1800);
+    } catch { setCopyError("Nomor belum tersalin. Tekan dan tahan nomor rekening untuk menyalinnya."); }
   }
 
   return <section className="gift-section" id="hadiah">
@@ -270,13 +267,14 @@ function Gifts({ accounts }) {
     <h2 data-reveal="">Tanda kasih</h2>
     <p data-reveal="" data-delay="80">Doa dan kehadiran Anda sudah lebih dari cukup. Bila ingin mengirim tanda kasih, detailnya di bawah.</p>
     <button className="gift-reveal" onClick={() => setOpen(!open)} aria-expanded={open}>{open ? "Tutup detail" : "Lihat amplop digital"}</button>
-    <div className="gift-panel" ref={panelRef}>
+    <div className={`gift-panel ${open ? "gift-panel-open" : ""}`} inert={!open} aria-hidden={!open}><div className="gift-panel-inner">
       <div className="account-list">{accounts.map((account) => <article key={`${account.provider}-${account.number}`}>
         <span>{account.provider}{account.owner ? ` · a.n. ${account.owner}` : ""}</span>
         <strong>{account.number}</strong>
-        <button onClick={() => copy(account)}>{copied === account.number ? "Tersalin ✓" : "Salin nomor"}</button>
+        <button onClick={() => copy(account)}><Icon name={copied === account.number ? "check" : "copy"} size={16}/>{copied === account.number ? "Tersalin" : "Salin nomor"}</button>
       </article>)}</div>
-    </div>
+    </div></div>
+    <p className="copy-status" role="status">{copyError}</p>
   </section>;
 }
 
@@ -305,7 +303,7 @@ function Wishes({ slug, guestName, wishes }) {
     <form onSubmit={submit}>
       <label>Ucapan<textarea maxLength="500" rows="4" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tuliskan doa dan ucapanmu di sini..." /></label>
       <label className="honeypot" aria-hidden="true">Website<input tabIndex="-1" autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
-      <div><small>{message.length}/500</small><button disabled={loading}>{loading ? "Mengirim..." : "Kirim ucapan"}</button></div>
+      <div><small>{message.length}/500</small><button disabled={loading}>{loading ? "Mengirim..." : "Kirim ucapan"}<Icon name="send" size={16}/></button></div>
       <p role="status">{status}</p>
     </form>
     {wishes.length > 0 && <div className="public-wishes">{wishes.map((wish, index) => <blockquote key={wish._id} data-reveal="" data-delay={index % 2 ? 110 : 0}><p>“{wish.message}”</p><cite>{wish.guestName}</cite></blockquote>)}</div>}
@@ -315,7 +313,7 @@ function Wishes({ slug, guestName, wishes }) {
 function CoupleTitle({ couple, separator = "&" }) {
   const { partnerOne, partnerTwo } = couple;
   if (!partnerOne || !partnerTwo) return partnerOne || partnerTwo;
-  return <>{partnerOne}<br /><em>{separator}</em><br />{partnerTwo}</>;
+  return <><span>{partnerOne}</span><em>{separator}</em><span>{partnerTwo}</span></>;
 }
 
 function RippleMark() {
