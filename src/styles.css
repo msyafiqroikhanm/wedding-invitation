@@ -251,7 +251,7 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .music-control i.playing b:nth-child(3) { animation-delay: -.55s; }
 @keyframes music-bar { to { height: 12px; } }
 
-.invite-hero { padding: 112px 8%; background: var(--pearl); display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 10%; scroll-margin-top: 24px; }
+.invite-hero { padding: 112px 8%; background: #e7efed; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 10%; scroll-margin-top: 24px; }
 .hero-title { text-align: center; }
 .hero-title h2 { margin: 0 0 28px; display: grid; font: 500 clamp(3.2rem, 6vw, 5rem)/1.1 var(--display); letter-spacing: -.04em; }
 .hero-title h2 em, .invitation-close h2 em { display: block; padding: 9px 0; font-size: .45em; font-style: italic; color: var(--mineral); }
@@ -260,8 +260,9 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .hero-letter p { margin: 0 0 20px; font-size: 1rem; line-height: 1.95; }
 .hero-letter a { min-height: 44px; display: inline-flex; align-items: center; gap: 18px; font-size: .8rem; text-decoration: none; }
 
-.couple-section { padding: 100px 10% 112px; scroll-margin-top: 24px; }
+.couple-section { padding: 100px 10% 112px; background: #faf8f3; scroll-margin-top: 24px; }
 .couple-intro { margin-bottom: 56px; text-align: center; }
+.invitation .section-label { margin: 0 0 20px; color: #86595e; font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
 .couple-intro h2 { margin: 0 0 20px; font: 500 clamp(2.3rem, 4.5vw, 3.7rem)/1.14 var(--display); letter-spacing: -.035em; }
 .couple-intro p { max-width: 32ch; margin: 0 auto; color: var(--muted); font-size: .92rem; line-height: 1.8; }
 .couple-portraits { display: grid; grid-template-columns: 1fr 1fr; gap: 10%; align-items: start; }
@@ -285,8 +286,9 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .countdown-section strong { font: 500 clamp(2.2rem, 5vw, 4rem)/1.2 var(--display); font-variant-numeric: tabular-nums; }
 .countdown-section small { color: #d6e2e4; font-size: .7rem; }
 
-.events-section { padding: 100px 8%; scroll-margin-top: 24px; }
+.events-section { padding: 100px 8%; background: #e8eeec; scroll-margin-top: 24px; }
 .events-section > header { margin-bottom: 40px; }
+.events-section > header .section-label { margin-bottom: 18px; }
 .events-section > header h2 { max-width: 12ch; margin: 0 0 18px; font: 500 clamp(2.6rem, 5vw, 4rem)/1.1 var(--display); letter-spacing: -.035em; }
 .events-section > header p { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.75; }
 .event-flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 48px; }
@@ -297,7 +299,7 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .event-date strong { font: 500 1.05rem var(--display); }
 .event-date small { color: var(--muted); font-size: .78rem; }
 .event-flow h3 { margin: 8px 0 0; font: 500 2rem var(--display); }
-.event-time { margin: 0; color: var(--mineral-dark); font-weight: 600; font-size: .92rem; }
+.event-time { margin: 0; color: var(--muted); font-weight: 600; font-size: .92rem; }
 .event-place strong { display: block; margin-bottom: 4px; }
 .event-place p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.6; }
 .event-flow article > small { color: var(--muted); font-size: .82rem; line-height: 1.6; }
@@ -342,9 +344,9 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .copy-status:empty { display: none; }
 
 .invite-wishes { padding: 96px 12%; color: #f7f8f4; background: #264b5a; scroll-margin-top: 24px; }
-.invite-wishes > header { margin-bottom: 32px; }
-.invite-wishes h2 { max-width: 17ch; margin: 0 0 20px; font: 500 clamp(2.4rem, 4.8vw, 3.7rem)/1.15 var(--display); letter-spacing: -.035em; }
-.invite-wishes > header p { margin: 0; color: #d4dbd2; font-size: .9rem; line-height: 1.7; }
+.invite-wishes > header { margin-bottom: 32px; text-align: center; }
+.invite-wishes h2 { max-width: 17ch; margin: 0 auto 20px; font: 500 clamp(2.4rem, 4.8vw, 3.7rem)/1.15 var(--display); letter-spacing: -.035em; }
+.invite-wishes > header p { max-width: 44ch; margin: auto; color: #d4dbd2; font-size: .9rem; line-height: 1.7; }
 .invite-wishes form { padding-bottom: 34px; border-bottom: 1px solid rgba(232,243,237,.2); }
 .invite-wishes form > label { display: grid; gap: 6px; color: #a9bfba; font-size: .68rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
 .invite-wishes textarea { min-height: 120px; padding: 12px 0; border: 0; border-bottom: 1px solid #a9bfba; border-radius: 0; color: #f4f8f5; background: transparent; font-size: 1rem; line-height: 1.6; font-weight: 400; letter-spacing: normal; text-transform: none; resize: vertical; }
@@ -359,7 +361,7 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .public-wishes p { margin: 0; font: 500 1.3rem/1.65 var(--display); }
 .public-wishes cite { color: #bfd1ca; font-style: normal; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
 
-.invitation-close { padding: 96px 24px calc(140px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: center; text-align: center; }
+.invitation-close { padding: 96px 24px calc(140px + env(safe-area-inset-bottom)); background: #faf8f3; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .invitation-close > p { max-width: 32ch; margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.8; }
 .invitation-close h2 { margin: 32px 0 0; display: grid; font: 500 clamp(3rem, 7vw, 5rem)/1.1 var(--display); letter-spacing: -.035em; }
 

@@ -171,7 +171,7 @@ function Cover({ guest, settings, couple, onOpen, opened }) {
 function Hero({ couple, date }) {
   return <section className="invite-hero" id="pembuka">
     <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { day: "numeric", month: "long", year: "numeric" })}</time>}</div>
-    <div className="hero-letter" data-reveal=""><p>{couple.openingText || "Dengan penuh kebahagiaan, kami mengundang Anda untuk hadir dan menjadi bagian dari hari pernikahan kami."}</p><a href="#mempelai">Mengenal mempelai <Icon name="arrow" size={16}/></a></div>
+    <div className="hero-letter" data-reveal=""><p>{couple.openingText || "Dengan bahagia kami mengundangmu"}</p><a href="#mempelai">Mengenal mempelai <Icon name="arrow" size={16}/></a></div>
   </section>;
 }
 
@@ -182,6 +182,7 @@ function Couple({ settings }) {
   ];
   return <section className="couple-section" id="mempelai">
     <div className="couple-intro" data-reveal="">
+      <p className="section-label">{settings.couple.partnerOne} & {settings.couple.partnerTwo}</p>
       <h2>Dua cerita,<br />satu perjalanan.</h2>
       <p>Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p>
     </div>
@@ -210,8 +211,9 @@ function Events({ events }) {
   if (!visible.length) return null;
   return <section className="events-section" id="acara">
     <header data-reveal="">
-      <h2>Tempat kita bertemu</h2>
-      <p>Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini.</p>
+      <p className="section-label">Rangkaian acara</p>
+      <h2>Hari bahagia kami.</h2>
+      <p>{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
     </header>
     <div className="event-flow">{visible.map((event, index) => <article key={index} data-reveal="">
       <div className="event-date">
@@ -222,8 +224,8 @@ function Events({ events }) {
         </div>
       </div>
       <h3>{event.label}</h3>
-      <p className="event-time">{event.startTime || "--:--"}{event.endTime ? ` – ${event.endTime}` : ""}</p>
-      <div className="event-place"><strong>{event.venue}</strong><p>{event.address}</p></div>
+      <p className="event-time">{event.startTime ? `${event.startTime}${event.endTime ? ` – ${event.endTime}` : ""}` : "Waktu menyusul"}</p>
+      {(event.venue || event.address) && <div className="event-place">{event.venue && <strong>{event.venue}</strong>}{event.address && <p>{event.address}</p>}</div>}
       {event.note && <small>{event.note}</small>}
       {event.mapsUrl && <a href={event.mapsUrl} target="_blank" rel="noreferrer"><Icon name="map" size={18}/>Buka Google Maps<Icon name="arrow" size={16}/></a>}
     </article>)}</div>
@@ -297,8 +299,8 @@ function Wishes({ slug, guestName, wishes }) {
   }
   return <section className="invite-wishes" id="ucapan">
     <header data-reveal="">
-      <h2>Tinggalkan kata yang akan kami ingat.</h2>
-      <p>Ucapan dari {guestName} akan muncul setelah kami membacanya.</p>
+      <h2>Titipkan doa untuk kami.</h2>
+      <p>Setiap pesan akan kami simpan sebagai kenangan. Ucapan dari {guestName} akan muncul setelah kami membacanya.</p>
     </header>
     <form onSubmit={submit}>
       <label>Ucapan<textarea maxLength="500" rows="4" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tuliskan doa dan ucapanmu di sini..." /></label>
