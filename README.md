@@ -6,6 +6,7 @@ A private, mobile-first wedding invitation workspace for one wedding. It combine
 
 - Email and password protected admin dashboard.
 - Responsive guest management for phones and laptops.
+- Guest-side labels (groom or bride), Excel template download, and bulk `.xlsx` import with duplicate-number skipping.
 - Unique, server-generated invitation slug for every registered guest.
 - Exact MongoDB guest lookup before any invitation payload is returned.
 - Prefilled WhatsApp messages and sending timestamps.
@@ -116,7 +117,7 @@ npm test
 npm run build
 ```
 
-The tests cover phone normalization, strict slug format, and WhatsApp template replacement. The production build is written to `dist/`.
+The tests cover phone normalization, strict slug format, WhatsApp template replacement, guest-side validation, and Excel template/import checks. The production build is written to `dist/`.
 
 ## Deploy to Vercel
 
@@ -132,6 +133,10 @@ The tests cover phone normalization, strict slug format, and WhatsApp template r
 ## WhatsApp Tracking
 
 `Sudah dikirim` means the dashboard opened WhatsApp with the guest number and prepared message, then saved `sentAt`. Regular `wa.me` links cannot confirm that WhatsApp sent, delivered, or read the message. Admins can reset the status if they cancel the handoff.
+
+## Importing Guests
+
+From **Daftar tamu**, download the Excel template and fill its **Daftar tamu** sheet. Keep the four column names unchanged, enter WhatsApp numbers as text (so leading zeroes remain), and use **Mempelai pria** or **Mempelai wanita** in the last column. Upload the `.xlsx` file with **Impor dari Excel**. Files are limited to 2 MB and 500 guest rows. Invalid rows stop the entire import with a row number; existing or repeated WhatsApp numbers are skipped without changing saved guests or their invitation links.
 
 ## Invitation Slug Security
 

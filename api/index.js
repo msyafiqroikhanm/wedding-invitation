@@ -4,7 +4,8 @@ import { handleUpload } from "@vercel/blob/client";
 import { pathToFileURL } from "node:url";
 import { clearSessionCookie, createSession, readSession, requireAdmin, setSessionCookie, verifyPassword } from "../server/auth.js";
 import { getDb, toObjectId } from "../server/db.js";
-import { cleanText, createSlug, isAllowedOrigin, isValidPhone, isValidSlug, normalizePhone } from "../server/validation.js";
+import { cleanText, createSlug, isAllowedOrigin, isValidSlug, validateGuest } from "../server/validation.js";
+import { guestTemplate, parseGuestWorkbook } from "../server/guest-import.js";
 
 const app = express();
 app.disable("x-powered-by");
@@ -53,12 +54,10 @@ app.get("/api/guests", requireAdmin, asyncRoute(async (_req, res) => {
 }));
 
 app.post("/api/guests", requireAdmin, asyncRoute(async (req, res) => {
-  const name = cleanText(req.body.name, 120);
-  const phone = normalizePhone(req.body.phone);
-  const connection = cleanText(req.body.connection, 80);
-  if (!name || !connection || !isValidPhone(phone)) return res.status(400).json({ error: "Nama, koneksi, dan nomor WhatsApp valid wajib diisi." });
+  const { guest: fields, error } = validateGuest(req.body);
+  if (error) return res.status(400).json({ error });
   const now = new Date();
-  const guest = { name, phone, connection, slug: createSlug(name), sentAt: null, createdAt: now, updatedAt: now };
+  const guest = { ...fields, slug: createSlug(fields.name), sentAt: null, createdAt: now, updatedAt: now };
   const db = await getDb();
   const result = await db.collection("guests").insertOne(guest);
   res.status(201).json({ ...guest, _id: result.insertedId });
@@ -66,18 +65,40 @@ app.post("/api/guests", requireAdmin, asyncRoute(async (req, res) => {
 
 app.patch("/api/guests/:id", requireAdmin, asyncRoute(async (req, res) => {
   const id = toObjectId(req.params.id);
-  const name = cleanText(req.body.name, 120);
-  const phone = normalizePhone(req.body.phone);
-  const connection = cleanText(req.body.connection, 80);
-  if (!id || !name || !connection || !isValidPhone(phone)) return res.status(400).json({ error: "Data tamu tidak valid." });
+  const { guest: fields, error } = validateGuest(req.body, { requireSide: false });
+  if (!id || error) return res.status(400).json({ error: error || "ID tamu tidak valid." });
   const db = await getDb();
   const guest = await db.collection("guests").findOneAndUpdate(
     { _id: id },
-    { $set: { name, phone, connection, updatedAt: new Date() } },
+    { $set: { ...fields, updatedAt: new Date() } },
     { returnDocument: "after" },
   );
   if (!guest) return res.status(404).json({ error: "Tamu tidak ditemukan." });
   res.json(guest);
+}));
+
+app.get("/api/guests/template", requireAdmin, asyncRoute(async (_req, res) => {
+  const buffer = await guestTemplate();
+  res.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  res.set("Content-Disposition", 'attachment; filename="template-daftar-tamu.xlsx"');
+  res.send(Buffer.from(buffer));
+}));
+
+app.post("/api/guests/import", requireAdmin, express.raw({ type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", limit: "2mb" }), asyncRoute(async (req, res) => {
+  if (!Buffer.isBuffer(req.body) || !req.body.length) return res.status(400).json({ error: "Pilih file Excel (.xlsx) untuk diimpor." });
+  let parsed;
+  try {
+    parsed = await parseGuestWorkbook(req.body);
+  } catch (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  const db = await getDb();
+  const existing = await db.collection("guests").find({ phone: { $in: parsed.guests.map((guest) => guest.phone) } }, { projection: { phone: 1 } }).toArray();
+  const phones = new Set(existing.map((guest) => guest.phone));
+  const now = new Date();
+  const fresh = parsed.guests.filter((guest) => !phones.has(guest.phone)).map((guest) => ({ ...guest, slug: createSlug(guest.name), sentAt: null, createdAt: now, updatedAt: now }));
+  if (fresh.length) await db.collection("guests").insertMany(fresh);
+  res.json({ added: fresh.length, skipped: parsed.skipped + parsed.guests.length - fresh.length });
 }));
 
 app.delete("/api/guests/:id", requireAdmin, asyncRoute(async (req, res) => {
@@ -226,6 +247,7 @@ app.put("/api/public/invitations/:slug/wish", asyncRoute(async (req, res) => {
 app.use("/api", (_req, res) => res.status(404).json({ error: "Endpoint tidak ditemukan." }));
 
 app.use((error, _req, res, _next) => {
+  if (error.type === "entity.too.large") return res.status(413).json({ error: "File Excel terlalu besar. Maksimal 2 MB." });
   console.error(error);
   res.status(500).json({ error: "Terjadi kendala di server. Coba kembali." });
 });

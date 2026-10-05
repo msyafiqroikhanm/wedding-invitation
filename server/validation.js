@@ -13,6 +13,20 @@ export function isValidPhone(value) {
   return /^62[1-9]\d{7,12}$/.test(normalizePhone(value));
 }
 
+export const GUEST_SIDES = { groom: "Mempelai pria", bride: "Mempelai wanita" };
+
+export function validateGuest(input, { requireSide = true } = {}) {
+  const name = cleanText(input.name, 120);
+  const phone = normalizePhone(input.phone);
+  const connection = cleanText(input.connection, 80);
+  const side = String(input.side ?? "").trim();
+  if (!name) return { error: "Nama tamu wajib diisi." };
+  if (!isValidPhone(phone)) return { error: "Nomor WhatsApp Indonesia tidak valid." };
+  if (!connection) return { error: "Koneksi wajib diisi." };
+  if ((requireSide || side) && !GUEST_SIDES[side]) return { error: "Pilih pihak mempelai pria atau wanita." };
+  return { guest: { name, phone, connection, side } };
+}
+
 export function createSlug(name) {
   const base = String(name ?? "")
     .normalize("NFKD")

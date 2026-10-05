@@ -16,6 +16,7 @@
     "@fontsource-variable/bricolage-grotesque": "^5.2.8",
     "@fontsource-variable/onest": "^5.2.8",
     "@vercel/blob": "^2.8.0",
+    "exceljs": "^4.4.0",
     "express": "^5.1.0",
     "mongodb": "^6.18.0",
     "react": "^19.1.1",

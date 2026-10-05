@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api, invitationUrl } from "../lib/api.js";
 import Icon from "../components/Icon.jsx";
 import { Empty } from "./Admin.jsx";
 
-const emptyForm = { name: "", phone: "", connection: "" };
+const emptyForm = { name: "", phone: "", connection: "", side: "" };
+const sides = { groom: "Mempelai pria", bride: "Mempelai wanita" };
 const renderTemplate = (template, values) => String(template ?? "").replace(/{{\s*(guest_name|couple_names|event_date|invite_url)\s*}}/g, (_, key) => values[key] ?? "");
 
 export default function Guests({ guests, setGuests, settings }) {
@@ -12,9 +13,12 @@ export default function Guests({ guests, setGuests, settings }) {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState(params.get("status") || "all");
   const [connection, setConnection] = useState("all");
+  const [side, setSide] = useState("all");
   const [editing, setEditing] = useState(params.get("add") ? emptyForm : null);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [importing, setImporting] = useState(false);
+  const fileInput = useRef(null);
 
   useEffect(() => {
     if (params.get("add")) {
@@ -32,8 +36,30 @@ export default function Guests({ guests, setGuests, settings }) {
   const filtered = useMemo(() => guests.filter((guest) => {
     const matchesQuery = `${guest.name} ${guest.phone}`.toLowerCase().includes(query.toLowerCase());
     const matchesStatus = status === "all" || (status === "sent" ? guest.sentAt : !guest.sentAt);
-    return matchesQuery && matchesStatus && (connection === "all" || guest.connection === connection);
-  }), [guests, query, status, connection]);
+    return matchesQuery && matchesStatus && (connection === "all" || guest.connection === connection) && (side === "all" || guest.side === side);
+  }), [guests, query, status, connection, side]);
+
+  async function importFile(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setError("");
+    setNotice("");
+    if (!file.name.toLowerCase().endsWith(".xlsx") || file.size > 2 * 1024 * 1024) {
+      setError("Pilih file .xlsx berukuran maksimal 2 MB.");
+      return;
+    }
+    setImporting(true);
+    try {
+      const result = await api("/guests/import", { method: "POST", headers: { "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }, body: file });
+      setGuests(await api("/guests"));
+      setNotice(result.added ? `${result.added} tamu ditambahkan.${result.skipped ? ` ${result.skipped} nomor yang sudah terdaftar dilewati.` : ""}` : "Tidak ada tamu baru untuk ditambahkan. Semua nomor dalam file sudah terdaftar.");
+    } catch (requestError) {
+      setError(requestError.message);
+    } finally {
+      setImporting(false);
+    }
+  }
 
   function replaceGuest(updated) {
     setGuests((current) => current.map((guest) => guest._id === updated._id ? updated : guest));
@@ -87,30 +113,32 @@ export default function Guests({ guests, setGuests, settings }) {
 
   return <div className="page guests-page">
     <header className="page-header"><div><h1>Daftar tamu</h1><p>{guests.length} nama tersimpan. Setiap tamu memiliki link yang berbeda.</p></div><button className="button button-primary" onClick={() => setEditing(emptyForm)}><Icon name="plus"/>Tambah tamu</button></header>
+    <div className="guest-import"><p>Siapkan daftar tamu di Excel, lalu unggah untuk membuat undangan personal sekaligus. Gunakan template agar kolom dan pilihan pihak sesuai.</p><div><a className="button button-secondary" href="/api/guests/template" download>Unduh template</a><button className="button button-secondary" disabled={importing} onClick={() => fileInput.current?.click()}>{importing ? "Memeriksa daftar tamu..." : "Impor dari Excel"}</button><input ref={fileInput} type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden onChange={importFile} /></div></div>
     {notice && <div className="toast" role="status">{notice}<button onClick={() => setNotice("")} aria-label="Tutup"><Icon name="close" size={16}/></button></div>}
     {error && <p className="form-error" role="alert">{error}</p>}
     <div className="list-toolbar">
       <label className="search-field"><Icon name="search"/><span className="sr-only">Cari tamu</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari nama atau nomor" /></label>
       <div className="toolbar-filters">
         <label className="connection-filter"><span className="sr-only">Filter berdasarkan koneksi</span><select value={connection} onChange={(event) => setConnection(event.target.value)}><option value="all">Semua koneksi</option>{connections.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
+        <label className="connection-filter"><span className="sr-only">Filter berdasarkan pihak mempelai</span><select value={side} onChange={(event) => setSide(event.target.value)}><option value="all">Semua pihak</option>{Object.entries(sides).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
         <div className="segmented" aria-label="Filter status">{[["all", "Semua"], ["unsent", "Belum"], ["sent", "Terkirim"]].map(([value, label]) => <button key={value} className={status === value ? "active" : ""} onClick={() => setStatus(value)}>{label}</button>)}</div>
       </div>
     </div>
     {filtered.length ? <div className="guest-table" role="table">
-      <div className="guest-table-head" role="row"><span>Tamu</span><span>WhatsApp</span><span>Koneksi</span><span>Status</span><span className="sr-only">Aksi</span></div>
+      <div className="guest-table-head" role="row"><span>Tamu</span><span>WhatsApp</span><span>Koneksi</span><span>Pihak mempelai</span><span>Status</span><span className="sr-only">Aksi</span></div>
       {filtered.map((guest) => <div className="guest-row" role="row" key={guest._id}>
         <div className="guest-name"><span className="avatar-letter">{guest.name.charAt(0)}</span><div><strong>{guest.name}</strong><small>/{guest.slug}</small></div></div>
-        <span className="guest-phone">+{guest.phone}</span><span>{guest.connection}</span>
+        <span className="guest-phone">+{guest.phone}</span><span className="guest-connection">{guest.connection}</span><span className="guest-side">{sides[guest.side] || "Belum ditentukan"}</span>
         <span className={`status ${guest.sentAt ? "status-sent" : "status-unsent"}`}>{guest.sentAt ? "Sudah dikirim" : "Belum dikirim"}</span>
         <div className="row-actions"><button className="button button-send" onClick={() => send(guest)}><Icon name="send" size={17}/>{guest.sentAt ? "Kirim lagi" : "Kirim WA"}</button><button className="icon-button" onClick={() => copyLink(guest)} aria-label={`Salin link ${guest.name}`}><Icon name="copy" size={18}/></button><details><summary className="icon-button" aria-label="Aksi lainnya"><Icon name="more"/></summary><div className="action-menu"><button onClick={() => setEditing(guest)}><Icon name="edit"/>Edit</button><button onClick={() => regenerate(guest)}><Icon name="link"/>Buat link baru</button>{guest.sentAt && <button onClick={() => reset(guest)}><Icon name="close"/>Tandai belum</button>}<button className="danger" onClick={() => remove(guest)}><Icon name="trash"/>Hapus</button></div></details></div>
       </div>)}
-    </div> : <Empty title="Tidak ada tamu ditemukan" text={query || status !== "all" || connection !== "all" ? "Ubah pencarian atau filter untuk melihat tamu lain." : "Tambahkan nama pertama untuk membuat link personal."} />}
+    </div> : <Empty title="Tidak ada tamu ditemukan" text={query || status !== "all" || connection !== "all" || side !== "all" ? "Ubah pencarian atau filter untuk melihat tamu lain." : "Tambahkan nama pertama untuk membuat link personal."} />}
     {editing && <GuestForm guest={editing} onClose={() => setEditing(null)} onSaved={(saved) => { setGuests((current) => editing._id ? current.map((guest) => guest._id === saved._id ? saved : guest) : [saved, ...current]); setEditing(null); setNotice(`${saved.name} berhasil disimpan.`); }} />}
   </div>;
 }
 
 function GuestForm({ guest, onClose, onSaved }) {
-  const [form, setForm] = useState({ name: guest.name || "", phone: guest.phone || "", connection: guest.connection || "" });
+  const [form, setForm] = useState({ name: guest.name || "", phone: guest.phone || "", connection: guest.connection || "", side: guest.side || "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -131,6 +159,7 @@ function GuestForm({ guest, onClose, onSaved }) {
     <label>Nama tamu<input autoFocus required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Contoh: Budi dan Keluarga" /></label>
     <label>Nomor WhatsApp<input inputMode="tel" required value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} placeholder="0812 3456 7890" /><small>Format 08, +62, dan 62 dapat digunakan.</small></label>
     <label>Koneksi<select required value={form.connection} onChange={(event) => setForm({ ...form, connection: event.target.value })}><option value="">Pilih koneksi</option><option>Keluarga</option><option>Teman Sekolah</option><option>Teman Kuliah</option><option>Teman Kantor</option><option>Tetangga</option><option>Lainnya</option></select></label>
+    <label>Tamu dari pihak<select required={!guest._id || !!guest.side} value={form.side} onChange={(event) => setForm({ ...form, side: event.target.value })}><option value="">Belum ditentukan</option>{Object.entries(sides).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>{guest._id && !guest.side && <small>Tamu lama dapat dilengkapi kemudian.</small>}</label>
     {error && <p className="form-error" role="alert">{error}</p>}
     <div className="form-actions"><button type="button" className="button button-secondary" onClick={onClose}>Batal</button><button className="button button-primary" disabled={loading}>{loading ? "Menyimpan..." : "Simpan tamu"}</button></div>
   </form></aside></div>;
