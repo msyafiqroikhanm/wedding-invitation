@@ -10,6 +10,7 @@ export default function Invite() {
   const [error, setError] = useState(null);
   const [opened, setOpened] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
   const audioRef = useRef(null);
   const rootRef = useRef(null);
 
@@ -54,11 +55,17 @@ export default function Invite() {
       { threshold: 0.1, rootMargin: "0px 0px -10% 0px" },
     );
 
+    // "" rises reading text, "mask" wipes headings open, "print" uncovers photographs.
+    const variants = {
+      "": { from: { opacity: "0", transform: "translateY(20px)" }, to: { opacity: "1", transform: "none" } },
+      mask: { from: { clipPath: "inset(0 0 100% 0)", transform: "translateY(14px)" }, to: { clipPath: "inset(-20% -10% -20% -10%)", transform: "none" } },
+      print: { from: { clipPath: "inset(100% 0 0 0)" }, to: { clipPath: "inset(0 0 0 0)" } },
+    };
+
     function reveal(element) {
       element.dataset.revealed = "1";
       element.style.transitionDelay = `${element.dataset.delay || 0}ms`;
-      element.style.opacity = "1";
-      element.style.transform = "none";
+      Object.assign(element.style, (variants[element.dataset.reveal] ?? variants[""]).to);
       observer.unobserve(element);
     }
 
@@ -67,9 +74,8 @@ export default function Invite() {
         if (reduce) return void (element.dataset.revealed = "1");
         if (!element.dataset.revealReady) {
           element.dataset.revealReady = "1";
-          element.style.opacity = "0";
-          element.style.transform = "translateY(20px)";
-          element.style.transition = "opacity .9s cubic-bezier(.22,1,.36,1), transform 1s cubic-bezier(.22,1,.36,1)";
+          Object.assign(element.style, (variants[element.dataset.reveal] ?? variants[""]).from);
+          element.style.transition = "opacity .9s cubic-bezier(.22,1,.36,1), transform 1s cubic-bezier(.22,1,.36,1), clip-path 1.1s cubic-bezier(.22,1,.36,1)";
         }
         observer.observe(element);
       });
@@ -100,6 +106,18 @@ export default function Invite() {
       window.removeEventListener("scroll", onScroll);
     };
   }, [data]);
+
+  // Scroll-spy for the bottom navigation. #pembuka clears the mark at the top of the page.
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!opened || !root) return;
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && setActiveSection(entry.target.id)),
+      { rootMargin: "-45% 0px -50% 0px" },
+    );
+    root.querySelectorAll("#pembuka, #mempelai, #acara, #galeri, #ucapan").forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [opened, data]);
 
   async function openInvitation() {
     setOpened(true);
@@ -136,13 +154,13 @@ export default function Invite() {
       {settings.gallery?.length > 0 && <Gallery photos={settings.gallery} />}
       {settings.giftAccounts?.length > 0 && <Gifts accounts={settings.giftAccounts} />}
       <Wishes slug={guest.slug} guestName={guest.name} wishes={wishes} />
-      <footer className="invitation-close"><RippleMark/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
+      <footer className="invitation-close"><RippleMark/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="mask" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
     </div>
     <nav className="invite-nav" aria-label="Bagian undangan" aria-hidden={!opened} inert={!opened}>
-      <a href="#mempelai"><Icon name="guests" size={18}/>Mempelai</a>
-      {settings.events?.some((event) => event.date || event.venue) && <a href="#acara"><Icon name="calendar" size={18}/>Acara</a>}
-      {settings.gallery?.length > 0 && <a href="#galeri"><Icon name="spark" size={18}/>Galeri</a>}
-      <a href="#ucapan"><Icon name="wishes" size={18}/>Ucapan</a>
+      <a href="#mempelai" aria-current={activeSection === "mempelai" ? "location" : undefined}><Icon name="guests" size={18}/>Mempelai</a>
+      {settings.events?.some((event) => event.date || event.venue) && <a href="#acara" aria-current={activeSection === "acara" ? "location" : undefined}><Icon name="calendar" size={18}/>Acara</a>}
+      {settings.gallery?.length > 0 && <a href="#galeri" aria-current={activeSection === "galeri" ? "location" : undefined}><Icon name="spark" size={18}/>Galeri</a>}
+      <a href="#ucapan" aria-current={activeSection === "ucapan" ? "location" : undefined}><Icon name="wishes" size={18}/>Ucapan</a>
     </nav>
   </main>;
 }
@@ -181,14 +199,14 @@ function Couple({ settings }) {
     { name: settings.couple.fullNameTwo || settings.couple.partnerTwo, short: settings.couple.partnerTwo, parents: settings.couple.parentsTwo, photo: settings.profilePhotos?.[1] },
   ];
   return <section className="couple-section" id="mempelai">
-    <div className="couple-intro" data-reveal="">
-      <p className="section-label">{settings.couple.partnerOne} & {settings.couple.partnerTwo}</p>
-      <h2>Dua cerita,<br />satu perjalanan.</h2>
-      <p>Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p>
+    <div className="couple-intro">
+      <p className="section-label" data-reveal="">{settings.couple.partnerOne} & {settings.couple.partnerTwo}</p>
+      <h2 data-reveal="mask" data-delay="80">Dua cerita,<br />satu perjalanan.</h2>
+      <p data-reveal="" data-delay="180">Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p>
     </div>
-    <div className="couple-portraits">{people.map((person, index) => <article key={index} data-reveal="">
-      <div className="portrait-frame">{person.photo ? <img src={person.photo} alt={`Potret ${person.name}`} loading="lazy"/> : <span>{person.short?.charAt(0)}</span>}</div>
-      <div className="portrait-meta">
+    <div className="couple-portraits">{people.map((person, index) => <article key={index}>
+      <div className="portrait-frame" data-reveal="print" data-delay={index * 120}>{person.photo ? <img src={person.photo} alt={`Potret ${person.name}`} loading="lazy"/> : <span>{person.short?.charAt(0)}</span>}</div>
+      <div className="portrait-meta" data-reveal="" data-delay={index * 120 + 240}>
         <div className="portrait-caption"><h3>{person.short}</h3>{person.name !== person.short && <p>{person.name}</p>}</div>
         {person.parents && <p className="portrait-parents">{person.parents}</p>}
       </div>
@@ -203,19 +221,20 @@ function Countdown({ event }) {
     return () => window.clearInterval(timer);
   }, [event]);
   if (remaining.done) return <section className="countdown-section"><p>Hari yang kami nantikan telah tiba.</p></section>;
-  return <section className="countdown-section"><p>Menuju hari pernikahan</p><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{String(value).padStart(2, "0")}</strong><small>{label}</small></span>)}</div></section>;
+  // Each digit is keyed by its value, so only the digits that change remount and roll in.
+  return <section className="countdown-section"><p>Menuju hari pernikahan</p><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
 }
 
 function Events({ events }) {
   const visible = events.filter((event) => event.date || event.venue);
   if (!visible.length) return null;
   return <section className="events-section" id="acara">
-    <header data-reveal="">
-      <p className="section-label">Rangkaian acara</p>
-      <h2>Hari bahagia kami.</h2>
-      <p>{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
+    <header>
+      <p className="section-label" data-reveal="">Rangkaian acara</p>
+      <h2 data-reveal="mask" data-delay="80">Hari bahagia kami.</h2>
+      <p data-reveal="" data-delay="180">{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
     </header>
-    <div className="event-flow">{visible.map((event, index) => <article key={index} data-reveal="">
+    <div className="event-flow">{visible.map((event, index) => <article key={index} data-reveal="" data-delay={index * 120}>
       <div className="event-date">
         <span>{event.date ? formatPart(event.date, { day: "2-digit" }) : "--"}</span>
         <div>
@@ -235,18 +254,18 @@ function Events({ events }) {
 function PhotoInterlude({ photo, coupleNames }) {
   return <figure className="photo-interlude">
     <img src={photo} alt={`${coupleNames} berjalan bersama di alam terbuka`} loading="lazy"/>
-    <figcaption data-reveal=""><span>Berjalan ke arah yang sama,</span><strong>bersama.</strong></figcaption>
+    <figcaption><span data-reveal="">Berjalan ke arah yang sama,</span><strong data-reveal="mask" data-delay="160">bersama.</strong></figcaption>
   </figure>;
 }
 
 function Gallery({ photos }) {
   return <section className="invite-gallery" id="galeri">
-    <header data-reveal="">
-      <h2>Potongan yang ingin kami simpan.</h2>
-      <p>Beberapa saat yang membawa kami sampai ke sini.</p>
+    <header>
+      <h2 data-reveal="mask">Potongan yang ingin kami simpan.</h2>
+      <p data-reveal="" data-delay="120">Beberapa saat yang membawa kami sampai ke sini.</p>
     </header>
     <div className="gallery-strip" data-reveal="" tabIndex="0" role="region" aria-label="Galeri foto, geser atau gunakan tombol panah">{photos.map((photo, index) => <figure key={`${photo}-${index}`} className="gallery-photo"><img src={photo} alt={`Momen pasangan ${index + 1}`} loading="lazy" /><figcaption>{String(index + 1).padStart(2, "0")} / {String(photos.length).padStart(2, "0")}</figcaption></figure>)}</div>
-    {photos.length > 1 && <p className="gallery-hint">Geser untuk melihat <Icon name="arrow" size={14}/></p>}
+    {photos.length > 1 && <><span className="gallery-progress" aria-hidden="true"><i/></span><p className="gallery-hint">Geser untuk melihat <Icon name="arrow" size={14}/></p></>}
   </section>;
 }
 
@@ -266,14 +285,14 @@ function Gifts({ accounts }) {
 
   return <section className="gift-section" id="hadiah">
     <RippleMark/>
-    <h2 data-reveal="">Tanda kasih</h2>
+    <h2 data-reveal="mask">Tanda kasih</h2>
     <p data-reveal="" data-delay="80">Doa dan kehadiran Anda sudah lebih dari cukup. Bila ingin mengirim tanda kasih, detailnya di bawah.</p>
     <button className="gift-reveal" onClick={() => setOpen(!open)} aria-expanded={open}>{open ? "Tutup detail" : "Lihat amplop digital"}</button>
     <div className={`gift-panel ${open ? "gift-panel-open" : ""}`} inert={!open} aria-hidden={!open}><div className="gift-panel-inner">
-      <div className="account-list">{accounts.map((account) => <article key={`${account.provider}-${account.number}`}>
+      <div className="account-list">{accounts.map((account, index) => <article key={`${account.provider}-${account.number}`} style={{ "--i": index }}>
         <span>{account.provider}{account.owner ? ` · a.n. ${account.owner}` : ""}</span>
         <strong>{account.number}</strong>
-        <button onClick={() => copy(account)}><Icon name={copied === account.number ? "check" : "copy"} size={16}/>{copied === account.number ? "Tersalin" : "Salin nomor"}</button>
+        <button onClick={() => copy(account)} data-copied={copied === account.number || undefined}><Icon name={copied === account.number ? "check" : "copy"} size={16}/>{copied === account.number ? "Tersalin" : "Salin nomor"}</button>
       </article>)}</div>
     </div></div>
     <p className="copy-status" role="status">{copyError}</p>
@@ -298,9 +317,9 @@ function Wishes({ slug, guestName, wishes }) {
     finally { setLoading(false); }
   }
   return <section className="invite-wishes" id="ucapan">
-    <header data-reveal="">
-      <h2>Titipkan doa untuk kami.</h2>
-      <p>Setiap pesan akan kami simpan sebagai kenangan. Ucapan dari {guestName} akan muncul setelah kami membacanya.</p>
+    <header>
+      <h2 data-reveal="mask">Titipkan doa untuk kami.</h2>
+      <p data-reveal="" data-delay="120">Setiap pesan akan kami simpan sebagai kenangan. Ucapan dari {guestName} akan muncul setelah kami membacanya.</p>
     </header>
     <form onSubmit={submit}>
       <label>Ucapan<textarea maxLength="500" rows="4" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tuliskan doa dan ucapanmu di sini..." /></label>

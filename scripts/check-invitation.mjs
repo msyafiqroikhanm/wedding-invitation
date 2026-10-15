@@ -68,7 +68,7 @@ try {
     await page.getByText("Ucapanmu sudah diterima dan menunggu persetujuan.").waitFor();
     assert.deepEqual(submission, { message: "Selamat menempuh hidup baru!", website: "" });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `Overflow at ${width}`);
-    assert.equal(await page.locator("[data-reveal]").evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === "1")), true);
+    assert.equal(await page.locator("[data-reveal]").evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === "1" && el.dataset.revealed === "1")), true);
     if (process.env.SCREENSHOT_DIR && width >= 390 && width !== 924) {
       await page.evaluate(() => scrollTo(0, 0));
       await page.screenshot({ path: `${process.env.SCREENSHOT_DIR}/invitation-${width}.png`, fullPage: true });
@@ -89,7 +89,7 @@ try {
   await page.waitForTimeout(1400);
   await page.evaluate(() => scrollTo(0, 0));
   await page.waitForTimeout(1400);
-  assert.equal(await page.locator("[data-reveal]").evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === "1")), true, "Fast scrolling must not strand hidden content");
+  assert.equal(await page.locator("[data-reveal]").evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === "1" && el.dataset.revealed === "1")), true, "Fast scrolling must not strand hidden content");
   for (const count of [0, 1, 9]) {
     data.settings.gallery = Array.from({ length: count }, (_, i) => fixture.settings.gallery[i % 4]);
     data.settings.couple.partnerOne = "Nama mempelai panjang untuk pengujian";
