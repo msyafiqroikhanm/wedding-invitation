@@ -108,7 +108,7 @@ export default function Invite() {
     };
   }, [data]);
 
-  // Scroll-spy for the bottom navigation. #pembuka clears the mark at the top of the page.
+  // Scroll-spy for the bottom navigation. Chapters without a link (#pembuka, #ayat, #hadiah) clear the mark.
   useEffect(() => {
     const root = rootRef.current;
     if (!opened || !root) return;
@@ -116,7 +116,7 @@ export default function Invite() {
       (entries) => entries.forEach((entry) => entry.isIntersecting && setActiveSection(entry.target.id)),
       { rootMargin: "-45% 0px -50% 0px" },
     );
-    root.querySelectorAll("#pembuka, #mempelai, #acara, #galeri, #ucapan").forEach((section) => observer.observe(section));
+    root.querySelectorAll("#pembuka, #ayat, #mempelai, #acara, #galeri, #hadiah, #ucapan").forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, [opened, data]);
 
@@ -147,7 +147,7 @@ export default function Invite() {
     <Cover guest={guest} settings={settings} couple={couple} onOpen={openInvitation} opened={opened} />
     <div className="invitation-content" aria-hidden={!opened} inert={!opened}>
       {settings.backsound && <button className="music-control" onClick={toggleMusic} aria-label={playing ? "Jeda musik" : "Putar musik"}><i className={playing ? "playing" : ""} aria-hidden="true"><b/><b/><b/></i></button>}
-      <Hero couple={couple} date={settings.events?.[0]?.date} />
+      <Hero couple={couple} date={settings.events?.[0]?.date} guestName={guest.name} />
       <Verse />
       <Couple settings={settings} />
       {settings.events?.[0]?.date && <Countdown event={settings.events[0]} />}
@@ -188,18 +188,24 @@ function Cover({ guest, settings, couple, onOpen, opened }) {
   </section>;
 }
 
-function Hero({ couple, date }) {
+function Hero({ couple, date, guestName }) {
   return <section className="invite-hero" id="pembuka">
-    <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { day: "numeric", month: "long", year: "numeric" })}</time>}</div>
-    <div className="hero-letter" data-reveal=""><p>{couple.openingText || "Dengan bahagia kami mengundangmu"}</p><a href="#mempelai">Mengenal mempelai <Icon name="arrow" size={16}/></a></div>
+    <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</time>}</div>
+    <div className="hero-letter" data-reveal="" data-delay="140">
+      <p className="hero-greeting">Teruntuk {guestName},</p>
+      <p>{couple.openingText || "Dengan bahagia kami mengundangmu"}</p>
+      <a href="#ayat">Lanjut membaca <Icon name="arrow" size={16}/></a>
+    </div>
   </section>;
 }
 
 // QS. Ar-Rum: 21, Arabic text and translation as published by Kemenag RI (via equran.id).
 function Verse() {
-  return <section className="verse-section" aria-label="Kutipan QS. Ar-Rum ayat 21">
+  return <section className="verse-section" id="ayat" aria-label="Kutipan QS. Ar-Rum ayat 21">
+    <span className="verse-rings" aria-hidden="true"><i/><i/><i/></span>
     <figure>
       <p className="verse-arabic" lang="ar" dir="rtl" data-reveal="mask">وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً ۗاِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ</p>
+      <RippleMark/>
       <blockquote data-reveal="" data-delay="160"><p>“Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.”</p></blockquote>
       <figcaption data-reveal="" data-delay="260">QS. Ar-Rum: 21</figcaption>
     </figure>
@@ -213,7 +219,6 @@ function Couple({ settings }) {
   ];
   return <section className="couple-section" id="mempelai">
     <div className="couple-intro">
-      <p className="section-label" data-reveal="">{settings.couple.partnerOne} & {settings.couple.partnerTwo}</p>
       <h2 data-reveal="mask" data-delay="80">Dua cerita,<br />satu perjalanan.</h2>
       <p data-reveal="" data-delay="180">Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p>
     </div>
@@ -235,7 +240,7 @@ function Countdown({ event }) {
   }, [event]);
   if (remaining.done) return <section className="countdown-section"><p>Hari yang kami nantikan telah tiba.</p></section>;
   // Each digit is keyed by its value, so only the digits that change remount and roll in.
-  return <section className="countdown-section"><p>Menuju hari pernikahan</p><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
+  return <section className="countdown-section"><p>Menuju hari pernikahan</p><h2 data-reveal="mask"><span>{formatPart(event.date, { weekday: "long" })},</span> <span>{formatPart(event.date, { day: "numeric", month: "long", year: "numeric" })}</span></h2><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
 }
 
 function Events({ events }) {
@@ -243,7 +248,6 @@ function Events({ events }) {
   if (!visible.length) return null;
   return <section className="events-section" id="acara">
     <header>
-      <p className="section-label" data-reveal="">Rangkaian acara</p>
       <h2 data-reveal="mask" data-delay="80">Hari bahagia kami.</h2>
       <p data-reveal="" data-delay="180">{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
     </header>
