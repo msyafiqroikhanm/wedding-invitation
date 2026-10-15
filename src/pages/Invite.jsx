@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { api } from "../lib/api.js";
 import Icon from "../components/Icon.jsx";
 import "@fontsource-variable/bodoni-moda";
+import "@fontsource/amiri-quran/arabic-400.css";
 
 export default function Invite() {
   const { slug } = useParams();
@@ -134,7 +135,7 @@ export default function Invite() {
   }
 
   if (error) return error.status === 404 ? <InvitationNotFound /> : <InvitationUnavailable message={error.message} />;
-  if (!data) return <div className="invitation-loading"><span className="water-loader"/><p>Mencari namamu di daftar tamu...</p></div>;
+  if (!data) return <div className="invitation-loading"><span className="water-loader"/><p>Sebentar, undanganmu sedang kami siapkan.</p></div>;
 
   const { guest, settings, wishes } = data;
   const couple = settings.couple;
@@ -147,6 +148,7 @@ export default function Invite() {
     <div className="invitation-content" aria-hidden={!opened} inert={!opened}>
       {settings.backsound && <button className="music-control" onClick={toggleMusic} aria-label={playing ? "Jeda musik" : "Putar musik"}><i className={playing ? "playing" : ""} aria-hidden="true"><b/><b/><b/></i></button>}
       <Hero couple={couple} date={settings.events?.[0]?.date} />
+      <Verse />
       <Couple settings={settings} />
       {settings.events?.[0]?.date && <Countdown event={settings.events[0]} />}
       <Events events={settings.events ?? []} />
@@ -190,6 +192,17 @@ function Hero({ couple, date }) {
   return <section className="invite-hero" id="pembuka">
     <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { day: "numeric", month: "long", year: "numeric" })}</time>}</div>
     <div className="hero-letter" data-reveal=""><p>{couple.openingText || "Dengan bahagia kami mengundangmu"}</p><a href="#mempelai">Mengenal mempelai <Icon name="arrow" size={16}/></a></div>
+  </section>;
+}
+
+// QS. Ar-Rum: 21, Arabic text and translation as published by Kemenag RI (via equran.id).
+function Verse() {
+  return <section className="verse-section" aria-label="Kutipan QS. Ar-Rum ayat 21">
+    <figure>
+      <p className="verse-arabic" lang="ar" dir="rtl" data-reveal="mask">وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً ۗاِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ</p>
+      <blockquote data-reveal="" data-delay="160"><p>“Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.”</p></blockquote>
+      <figcaption data-reveal="" data-delay="260">QS. Ar-Rum: 21</figcaption>
+    </figure>
   </section>;
 }
 
