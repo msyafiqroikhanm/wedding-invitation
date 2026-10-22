@@ -105,16 +105,20 @@ test("authenticated admin can download a template and gets a clear invalid-file 
 });
 
 test("invitation links carry preview tags without revealing unregistered slugs", { skip: !existsSync("dist/index.html") && "needs a build" }, async () => {
+  const previous = process.env.APP_URL;
+  process.env.APP_URL = "http://localhost:5173";
   const server = app.listen(0);
   try {
     const response = await fetch(`http://127.0.0.1:${server.address().port}/invite/not-a-real-slug`);
     assert.equal(response.status, 200);
     const html = await response.text();
-    assert.match(html, /<meta property="og:image" content="[^"]+\/og-cover\.jpg" \/>/);
+    assert.match(html, /<meta property="og:image" content="http:\/\/127\.0\.0\.1:\d+\/og-cover\.jpg" \/>/);
     assert.match(html, /<title>Undangan Pernikahan<\/title>/);
     assert.match(html, /<div id="root"><\/div>/);
     assert.doesNotMatch(html, /Kepada /);
   } finally {
     await new Promise((resolve) => server.close(resolve));
+    if (previous === undefined) delete process.env.APP_URL;
+    else process.env.APP_URL = previous;
   }
 });

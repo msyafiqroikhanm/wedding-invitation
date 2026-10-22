@@ -346,11 +346,12 @@ function safeUrl(value) {
   return /^https:\/\//.test(value ?? "") ? String(value).slice(0, 1000) : "";
 }
 
+// Preview URLs use the host the link was opened on, so they stay right on every domain even when
+// APP_URL still points at local development.
 function siteOrigin(req) {
-  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, "");
   const protocol = String(req.get("x-forwarded-proto") || req.protocol).split(",")[0].trim();
-  const host = String(req.get("x-forwarded-host") || req.get("host")).split(",")[0].trim();
-  return `${protocol}://${host}`;
+  const host = String(req.get("x-forwarded-host") || req.get("host") || "").split(",")[0].trim();
+  return host ? `${protocol}://${host}` : (process.env.APP_URL || "").replace(/\/$/, "");
 }
 
 let shellCache;
