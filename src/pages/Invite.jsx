@@ -108,7 +108,7 @@ export default function Invite() {
     };
   }, [data]);
 
-  // Scroll-spy for the bottom navigation. Chapters without a link (#pembuka, #ayat, #hadiah) clear the mark.
+  // Scroll-spy for the bottom navigation and the chapter dots.
   useEffect(() => {
     const root = rootRef.current;
     if (!opened || !root) return;
@@ -116,7 +116,7 @@ export default function Invite() {
       (entries) => entries.forEach((entry) => entry.isIntersecting && setActiveSection(entry.target.id)),
       { rootMargin: "-45% 0px -50% 0px" },
     );
-    root.querySelectorAll("#pembuka, #ayat, #mempelai, #acara, #galeri, #hadiah, #ucapan").forEach((section) => observer.observe(section));
+    root.querySelectorAll("#pembuka, #ayat, #mempelai, #hitung-mundur, #acara, #galeri, #hadiah, #ucapan, #penutup").forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, [opened, data]);
 
@@ -140,6 +140,13 @@ export default function Invite() {
   const { guest, settings, wishes } = data;
   const couple = settings.couple;
   const coupleNames = [couple.partnerOne, couple.partnerTwo].filter(Boolean).join(" & ");
+  const hasEvents = settings.events?.some((event) => event.date || event.venue);
+  const chapters = [
+    ["pembuka", "Pembuka"], ["ayat", "QS. Ar-Rum: 21"], ["mempelai", "Mempelai"],
+    settings.events?.[0]?.date && ["hitung-mundur", "Hitung mundur"], hasEvents && ["acara", "Acara"],
+    settings.gallery?.length > 0 && ["galeri", "Galeri"], settings.giftAccounts?.length > 0 && ["hadiah", "Tanda kasih"],
+    ["ucapan", "Ucapan"], ["penutup", "Penutup"],
+  ].filter(Boolean);
   if (!coupleNames) return <InvitationNotReady guest={guest} />;
 
   return <main ref={rootRef} className={`invitation ${opened ? "invitation-open" : "invitation-closed"}`}>
@@ -156,11 +163,14 @@ export default function Invite() {
       {settings.gallery?.length > 0 && <Gallery photos={settings.gallery} />}
       {settings.giftAccounts?.length > 0 && <Gifts accounts={settings.giftAccounts} />}
       <Wishes slug={guest.slug} guestName={guest.name} wishes={wishes} />
-      <footer className="invitation-close"><RippleMark/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="mask" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
+      <footer className="invitation-close" id="penutup"><RippleMark/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="mask" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
     </div>
+    <nav className="chapter-dots" aria-label="Halaman undangan" aria-hidden={!opened} inert={!opened}>
+      {chapters.map(([id, label]) => <a key={id} href={`#${id}`} aria-label={`Bagian: ${label}`} aria-current={activeSection === id ? "location" : undefined}><span aria-hidden="true">{label}</span></a>)}
+    </nav>
     <nav className="invite-nav" aria-label="Bagian undangan" aria-hidden={!opened} inert={!opened}>
       <a href="#mempelai" aria-current={activeSection === "mempelai" ? "location" : undefined}><Icon name="guests" size={18}/>Mempelai</a>
-      {settings.events?.some((event) => event.date || event.venue) && <a href="#acara" aria-current={activeSection === "acara" ? "location" : undefined}><Icon name="calendar" size={18}/>Acara</a>}
+      {hasEvents && <a href="#acara" aria-current={activeSection === "acara" ? "location" : undefined}><Icon name="calendar" size={18}/>Acara</a>}
       {settings.gallery?.length > 0 && <a href="#galeri" aria-current={activeSection === "galeri" ? "location" : undefined}><Icon name="spark" size={18}/>Galeri</a>}
       <a href="#ucapan" aria-current={activeSection === "ucapan" ? "location" : undefined}><Icon name="wishes" size={18}/>Ucapan</a>
     </nav>
@@ -239,9 +249,9 @@ function Countdown({ event }) {
     const timer = window.setInterval(() => setRemaining(calculateRemaining(event)), 1000);
     return () => window.clearInterval(timer);
   }, [event]);
-  if (remaining.done) return <section className="countdown-section"><p>Hari yang kami nantikan telah tiba.</p></section>;
+  if (remaining.done) return <section className="countdown-section" id="hitung-mundur"><p>Hari yang kami nantikan telah tiba.</p></section>;
   // Each digit is keyed by its value, so only the digits that change remount and roll in.
-  return <section className="countdown-section"><p>Menuju hari pernikahan</p><h2 data-reveal="mask"><span>{formatPart(event.date, { weekday: "long" })},</span> <span>{formatPart(event.date, { day: "numeric", month: "long", year: "numeric" })}</span></h2><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
+  return <section className="countdown-section" id="hitung-mundur"><p>Menuju hari pernikahan</p><h2 data-reveal="mask"><span>{formatPart(event.date, { weekday: "long" })},</span> <span>{formatPart(event.date, { day: "numeric", month: "long", year: "numeric" })}</span></h2><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
 }
 
 function Events({ events, coupleNames }) {
