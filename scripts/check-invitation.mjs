@@ -65,7 +65,7 @@ try {
     const focus = await page.locator(".invite-wishes textarea").evaluate((el) => ({ color: getComputedStyle(el).outlineColor, width: getComputedStyle(el).outlineWidth }));
     assert.deepEqual(focus, { color: "rgb(146, 183, 196)", width: "3px" }, "The wish field needs a contrasting keyboard focus indicator");
     await page.getByRole("button", { name: "Kirim ucapan" }).click();
-    await page.getByText("Ucapanmu sudah diterima dan menunggu persetujuan.").waitFor();
+    await page.getByText("Terima kasih, ucapan Anda sudah kami terima").waitFor();
     assert.deepEqual(submission, { message: "Selamat menempuh hidup baru!", website: "" });
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `Overflow at ${width}`);
     assert.equal(await page.locator("[data-reveal]").evaluateAll((els) => els.every((el) => getComputedStyle(el).opacity === "1" && el.dataset.revealed === "1")), true);

@@ -135,7 +135,7 @@ export default function Invite() {
   }
 
   if (error) return error.status === 404 ? <InvitationNotFound /> : <InvitationUnavailable message={error.message} />;
-  if (!data) return <div className="invitation-loading"><span className="water-loader"/><p>Sebentar, undanganmu sedang kami siapkan.</p></div>;
+  if (!data) return <div className="invitation-loading"><span className="water-loader"/><p>Sebentar, undangan Anda sedang kami siapkan.</p></div>;
 
   const { guest, settings, wishes } = data;
   const couple = settings.couple;
@@ -147,11 +147,11 @@ export default function Invite() {
     <Cover guest={guest} settings={settings} couple={couple} onOpen={openInvitation} opened={opened} />
     <div className="invitation-content" aria-hidden={!opened} inert={!opened}>
       {settings.backsound && <button className="music-control" onClick={toggleMusic} aria-label={playing ? "Jeda musik" : "Putar musik"}><i className={playing ? "playing" : ""} aria-hidden="true"><b/><b/><b/></i></button>}
-      <Hero couple={couple} date={settings.events?.[0]?.date} guestName={guest.name} />
+      <Hero couple={couple} event={settings.events?.[0]} guestName={guest.name} />
       <Verse />
       <Couple settings={settings} />
       {settings.events?.[0]?.date && <Countdown event={settings.events[0]} />}
-      <Events events={settings.events ?? []} />
+      <Events events={settings.events ?? []} coupleNames={coupleNames} />
       {settings.interludePhoto && <PhotoInterlude photo={settings.interludePhoto} coupleNames={coupleNames} />}
       {settings.gallery?.length > 0 && <Gallery photos={settings.gallery} />}
       {settings.giftAccounts?.length > 0 && <Gifts accounts={settings.giftAccounts} />}
@@ -188,12 +188,13 @@ function Cover({ guest, settings, couple, onOpen, opened }) {
   </section>;
 }
 
-function Hero({ couple, date, guestName }) {
+function Hero({ couple, event, guestName }) {
+  const date = event?.date;
   return <section className="invite-hero" id="pembuka">
-    <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</time>}</div>
+    <div className="hero-title" data-reveal=""><RippleMark/><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</time>}{event?.venue && <p className="hero-place">{event.venue}</p>}</div>
     <div className="hero-letter" data-reveal="" data-delay="140">
       <p className="hero-greeting">Teruntuk {guestName},</p>
-      <p>{couple.openingText || "Dengan bahagia kami mengundangmu"}</p>
+      <p>{couple.openingText || "Dengan penuh syukur, kami mengundang Anda ke hari pernikahan kami."}</p>
       <a href="#ayat">Lanjut membaca <Icon name="arrow" size={16}/></a>
     </div>
   </section>;
@@ -243,15 +244,15 @@ function Countdown({ event }) {
   return <section className="countdown-section"><p>Menuju hari pernikahan</p><h2 data-reveal="mask"><span>{formatPart(event.date, { weekday: "long" })},</span> <span>{formatPart(event.date, { day: "numeric", month: "long", year: "numeric" })}</span></h2><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
 }
 
-function Events({ events }) {
+function Events({ events, coupleNames }) {
   const visible = events.filter((event) => event.date || event.venue);
   if (!visible.length) return null;
   return <section className="events-section" id="acara">
     <header>
-      <h2 data-reveal="mask" data-delay="80">Hari bahagia kami.</h2>
-      <p data-reveal="" data-delay="180">{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
+      <h2 data-reveal="mask">Kapan dan di mana</h2>
+      <p data-reveal="" data-delay="80">{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
     </header>
-    <div className="event-flow">{visible.map((event, index) => <article key={index} data-reveal="" data-delay={index * 120}>
+    <div className="event-flow">{visible.map((event, index) => <article key={index} data-reveal="" data-delay={160 + index * 80}>
       <div className="event-date">
         <span>{event.date ? formatPart(event.date, { day: "2-digit" }) : "--"}</span>
         <div>
@@ -263,7 +264,10 @@ function Events({ events }) {
       <p className="event-time">{event.startTime ? `${event.startTime}${event.endTime ? ` – ${event.endTime}` : ""}` : "Waktu menyusul"}</p>
       {(event.venue || event.address) && <div className="event-place">{event.venue && <strong>{event.venue}</strong>}{event.address && <p>{event.address}</p>}</div>}
       {event.note && <small>{event.note}</small>}
-      {event.mapsUrl && <a href={event.mapsUrl} target="_blank" rel="noreferrer"><Icon name="map" size={18}/>Buka Google Maps<Icon name="arrow" size={16}/></a>}
+      <div className="event-actions">
+        {event.mapsUrl && <a href={event.mapsUrl} target="_blank" rel="noreferrer"><Icon name="map" size={18}/>Buka Google Maps<Icon name="arrow" size={16}/></a>}
+        {event.date && event.startTime && <a className="event-calendar" href={calendarFile(event, coupleNames)} download={`${event.label || "acara"}.ics`}><Icon name="calendar" size={18}/>Simpan ke kalender</a>}
+      </div>
     </article>)}</div>
   </section>;
 }
@@ -329,17 +333,17 @@ function Wishes({ slug, guestName, wishes }) {
     try {
       await api(`/public/invitations/${slug}/wish`, { method: "PUT", body: JSON.stringify({ message, website }) });
       setMessage("");
-      setStatus("Ucapanmu sudah diterima dan menunggu persetujuan.");
+      setStatus("Terima kasih, ucapan Anda sudah kami terima dan akan tampil setelah kami baca.");
     } catch (requestError) { setStatus(requestError.message); }
     finally { setLoading(false); }
   }
   return <section className="invite-wishes" id="ucapan">
     <header>
       <h2 data-reveal="mask">Titipkan doa untuk kami.</h2>
-      <p data-reveal="" data-delay="120">Setiap pesan akan kami simpan sebagai kenangan. Ucapan dari {guestName} akan muncul setelah kami membacanya.</p>
+      <p data-reveal="" data-delay="120">Setiap pesan kami simpan sebagai kenangan. Ucapan dari {guestName} akan tampil di sini setelah kami membacanya.</p>
     </header>
     <form onSubmit={submit}>
-      <label>Ucapan<textarea maxLength="500" rows="4" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tuliskan doa dan ucapanmu di sini..." /></label>
+      <label>Ucapan<textarea maxLength="500" rows="4" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Tuliskan doa dan ucapan Anda di sini..." /></label>
       <label className="honeypot" aria-hidden="true">Website<input tabIndex="-1" autoComplete="off" value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
       <div><small>{message.length}/500</small><button disabled={loading}>{loading ? "Mengirim..." : "Kirim ucapan"}<Icon name="send" size={16}/></button></div>
       <p role="status">{status}</p>
@@ -379,9 +383,31 @@ function formatDotted(date) {
   return `${day} · ${month} · ${year}`;
 }
 
-function calculateRemaining(event) {
+function eventTime(event, time) {
   const offsets = { "Asia/Jakarta": "+07:00", "Asia/Makassar": "+08:00", "Asia/Jayapura": "+09:00" };
-  const target = new Date(`${event.date}T${event.startTime || "00:00"}:00${offsets[event.timezone] || "+07:00"}`).getTime();
+  return new Date(`${event.date}T${time || "00:00"}:00${offsets[event.timezone] || "+07:00"}`);
+}
+
+// One event as an .ics file, so a guest can add it to their phone calendar with a tap.
+function calendarFile(event, coupleNames) {
+  const start = eventTime(event, event.startTime);
+  const end = event.endTime ? eventTime(event, event.endTime) : new Date(start.getTime() + 2 * 3600000);
+  const stamp = (date) => date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const text = (value = "") => value.replace(/[\\,;]/g, (match) => `\\${match}`).replace(/\n/g, "\\n");
+  const lines = [
+    "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Undangan Pernikahan//ID", "BEGIN:VEVENT",
+    `UID:${stamp(start)}-${encodeURIComponent(event.label || "acara")}@undangan`, `DTSTAMP:${stamp(new Date())}`,
+    `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
+    `SUMMARY:${text(`${event.label || "Acara"} ${coupleNames}`)}`,
+    `LOCATION:${text([event.venue, event.address].filter(Boolean).join(", "))}`,
+    ...(event.mapsUrl ? [`URL:${event.mapsUrl}`] : []),
+    "END:VEVENT", "END:VCALENDAR",
+  ];
+  return `data:text/calendar;charset=utf-8,${encodeURIComponent(lines.join("\r\n"))}`;
+}
+
+function calculateRemaining(event) {
+  const target = eventTime(event, event.startTime).getTime();
   const difference = Math.max(0, target - Date.now());
   return { done: difference === 0, days: Math.floor(difference / 86400000), hours: Math.floor((difference / 3600000) % 24), minutes: Math.floor((difference / 60000) % 60), seconds: Math.floor((difference / 1000) % 60) };
 }
