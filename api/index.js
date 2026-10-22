@@ -2,6 +2,8 @@ import express from "express";
 import { del } from "@vercel/blob";
 import { handleUpload } from "@vercel/blob/client";
 import { pathToFileURL } from "node:url";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { clearSessionCookie, createSession, readSession, requireAdmin, setSessionCookie, verifyPassword } from "../server/auth.js";
 import { getDb, toObjectId } from "../server/db.js";
 import { cleanText, createSlug, isAllowedOrigin, isValidSlug, validateGuest } from "../server/validation.js";
@@ -244,6 +246,44 @@ app.put("/api/public/invitations/:slug/wish", asyncRoute(async (req, res) => {
   res.json({ _id: wish._id, status: wish.status });
 }));
 
+// WhatsApp and other link previews read Open Graph tags without running JavaScript, so the
+// invitation page shell gets them on the server. Unregistered slugs only get generic tags.
+app.get("/invite/:slug", asyncRoute(async (req, res) => {
+  const origin = siteOrigin(req);
+  let shell = await loadShell(origin);
+  let meta = { title: "Undangan Pernikahan", description: "Undangan pribadi untuk tamu yang terdaftar." };
+  // A failed lookup must never stop the guest from opening the page, so it falls back to generic tags.
+  try {
+    if (isValidSlug(req.params.slug) && await allowRequest(`invite:${req.ip}`, 120, 15 * 60 * 1000)) {
+      const db = await getDb();
+      const guest = await db.collection("guests").findOne({ slug: req.params.slug });
+      const settings = guest && ((await db.collection("settings").findOne({ _id: "main" })) ?? defaultSettings());
+      const names = [settings?.couple?.partnerOne, settings?.couple?.partnerTwo].filter(Boolean).join(" & ");
+      if (guest && names) {
+        const event = settings.events?.find((item) => item.date) ?? {};
+        const when = event.date ? new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date(`${event.date}T12:00:00`)) : "";
+        meta = { title: `Undangan Pernikahan ${names}`, description: [`Kepada ${guest.name}`, [when, event.venue].filter(Boolean).join(" · ")].filter(Boolean).join(". ") };
+      }
+    }
+  } catch (error) { console.error(error); }
+  const tags = [
+    `<title>${escapeHtml(meta.title)}</title>`,
+    `<meta name="description" content="${escapeHtml(meta.description)}" />`,
+    `<meta property="og:type" content="website" />`,
+    `<meta property="og:title" content="${escapeHtml(meta.title)}" />`,
+    `<meta property="og:description" content="${escapeHtml(meta.description)}" />`,
+    `<meta property="og:url" content="${escapeHtml(`${origin}/invite/${encodeURIComponent(req.params.slug)}`)}" />`,
+    `<meta property="og:image" content="${origin}/og-cover.jpg" />`,
+    `<meta property="og:image:type" content="image/jpeg" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+  ].join("\n    ");
+  shell = shell.replace(/<title>[^<]*<\/title>/, () => tags);
+  res.set("Cache-Control", "private, no-store");
+  res.type("html").send(shell);
+}));
+
 app.use("/api", (_req, res) => res.status(404).json({ error: "Endpoint tidak ditemukan." }));
 
 app.use((error, _req, res, _next) => {
@@ -304,6 +344,31 @@ function sanitizeSettings(input) {
 function safeUrl(value) {
   if (/^\/(?!\/)[a-zA-Z0-9/_-]+\.(?:jpe?g|png|webp|mp3|m4a)$/.test(value ?? "")) return String(value);
   return /^https:\/\//.test(value ?? "") ? String(value).slice(0, 1000) : "";
+}
+
+function siteOrigin(req) {
+  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/$/, "");
+  const protocol = String(req.get("x-forwarded-proto") || req.protocol).split(",")[0].trim();
+  const host = String(req.get("x-forwarded-host") || req.get("host")).split(",")[0].trim();
+  return `${protocol}://${host}`;
+}
+
+let shellCache;
+// The built index.html carries hashed asset names, so read it from the build output and fall back
+// to the deployed static copy.
+async function loadShell(origin) {
+  if (shellCache) return shellCache;
+  try { shellCache = await readFile(join(process.cwd(), "dist", "index.html"), "utf8"); }
+  catch {
+    const response = await fetch(`${origin}/index.html`);
+    if (!response.ok) throw new Error(`index.html tidak dapat dimuat (${response.status})`);
+    shellCache = await response.text();
+  }
+  return shellCache;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 }
 
 function publicSettings(settings) {
