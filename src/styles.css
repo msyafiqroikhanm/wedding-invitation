@@ -427,15 +427,18 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 
 /* Ornaments: engraved blue sprigs at chapter corners, a flower divider, and a sparse blossom
    print on light pages. Stems draw in, leaves and blossoms open, corner sprigs sway like a garden. */
-.invitation, .invitation-state { --orn-line: #6e8c96; --orn-leaf: #dbe6e3; --orn-petal: #f7f8f4; --orn-heart: #aab5a4; --blossoms: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3Cg id='b'%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(72)'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(144)'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(216)'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(288)'/%3E%3C/g%3E%3Cpath id='l' d='M0 0c4-4.5 11-4.5 15 0-4 4.5-11 4.5-15 0z'/%3E%3C/defs%3E%3Cg fill='%23264b5a' fill-opacity='.07'%3E%3Cuse href='%23b' x='34' y='46'/%3E%3Cuse href='%23b' x='158' y='104'/%3E%3Cuse href='%23b' x='86' y='180'/%3E%3Cuse href='%23l' x='42' y='52' transform='rotate(35 42 52)'/%3E%3Cuse href='%23l' x='94' y='186' transform='rotate(-30 94 186)'/%3E%3C/g%3E%3C/svg%3E"); }
-.invitation-cover, .verse-section, .countdown-section, .invite-wishes { --orn-line: rgba(214,226,228,.6); --orn-leaf: rgba(214,226,228,.1); --orn-petal: rgba(214,226,228,.16); --orn-heart: #b8ccd1; }
+.invitation, .invitation-state { --orn-line: #6e8c96; --orn-leaf: #dbe6e3; --orn-petal: #f7f8f4; --orn-petal-deep: #c9dbe0; --orn-heart: #aab5a4; --blossoms: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cdefs%3E%3Cg id='b'%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(72)'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(144)'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(216)'/%3E%3Cellipse cy='-4.6' rx='2.6' ry='3.8' transform='rotate(288)'/%3E%3C/g%3E%3Cpath id='l' d='M0 0c4-4.5 11-4.5 15 0-4 4.5-11 4.5-15 0z'/%3E%3C/defs%3E%3Cg fill='%23264b5a' fill-opacity='.07'%3E%3Cuse href='%23b' x='34' y='46'/%3E%3Cuse href='%23b' x='158' y='104'/%3E%3Cuse href='%23b' x='86' y='180'/%3E%3Cuse href='%23l' x='42' y='52' transform='rotate(35 42 52)'/%3E%3Cuse href='%23l' x='94' y='186' transform='rotate(-30 94 186)'/%3E%3C/g%3E%3C/svg%3E"); }
+.invitation-cover, .verse-section, .countdown-section, .invite-wishes { --orn-line: rgba(214,226,228,.6); --orn-leaf: rgba(214,226,228,.1); --orn-petal: rgba(214,226,228,.16); --orn-petal-deep: rgba(184,204,209,.32); --orn-heart: #b8ccd1; }
 .invite-hero, .couple-section, .events-section, .gift-section, .invitation-close { background-image: var(--blossoms); }
 .invite-hero, .couple-intro, .countdown-section, .events-section, .invite-wishes, .invitation-close { position: relative; overflow: clip; }
 :is(.invite-hero, .couple-intro, .countdown-section, .events-section, .invite-wishes, .invitation-close) > :not(.orn), .cover-copy { position: relative; z-index: 1; }
 .sprig, .bloom { overflow: visible; fill: none; stroke: var(--orn-line); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .sprig .leaf, .bloom .leaf { fill: var(--orn-leaf); }
-.blossom ellipse { fill: var(--orn-petal); }
-.blossom circle { fill: var(--orn-heart); stroke: none; }
+.blossom .petal { fill: var(--orn-petal); }
+.blossom-rose .petal, .blossom-tulip .petal { fill: var(--orn-petal-deep); }
+.blossom .petal-line { fill: none; }
+.blossom .heart { fill: var(--orn-heart); stroke: none; }
+.blossom .berry { fill: var(--orn-heart); }
 .bloom { display: block; width: 132px; height: 27px; margin: 0 auto 26px; }
 .orn { position: absolute; z-index: 0; width: clamp(150px, 44vw, 250px); height: auto; }
 .orn-tl { top: 0; left: 0; transform: scaleY(-1); }

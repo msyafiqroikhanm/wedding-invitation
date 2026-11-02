@@ -168,7 +168,7 @@ export default function Invite() {
       {settings.gallery?.length > 0 && <Gallery photos={settings.gallery} />}
       {settings.giftAccounts?.length > 0 && <Gifts accounts={settings.giftAccounts} />}
       <Wishes slug={guest.slug} guestName={guest.name} wishes={wishes} />
-      <footer className="invitation-close" id="penutup"><Sprig className="orn orn-tl"/><Sprig className="orn orn-br"/><Bloom/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="mask" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
+      <footer className="invitation-close" id="penutup"><Sprig className="orn orn-tl" bouquet="aster"/><Sprig className="orn orn-br" bouquet="mawar"/><Bloom kind="rose"/><p data-reveal="">{couple.closingText || "Terima kasih telah menjadi bagian dari hari yang berarti bagi kami."}</p><h2 data-reveal="mask" data-delay="110"><CoupleTitle couple={couple} /></h2></footer>
     </div>
     <nav className="chapter-dots" aria-label="Halaman undangan" aria-hidden={!opened} inert={!opened}>
       {chapters.map(([id, label]) => <a key={id} href={`#${id}`} aria-label={`Bagian: ${label}`} aria-current={activeSection === id ? "location" : undefined}><span aria-hidden="true">{label}</span></a>)}
@@ -185,8 +185,8 @@ export default function Invite() {
 function Cover({ guest, settings, couple, onOpen, opened }) {
   const date = settings.events?.[0]?.date;
   return <section className="invitation-cover" aria-hidden={opened} inert={opened}>
-    <Sprig className="orn orn-tl"/>
-    <Sprig className="orn orn-br"/>
+    <Sprig className="orn orn-tl" bouquet="mawar"/>
+    <Sprig className="orn orn-br" bouquet="melati"/>
     <div className="cover-copy">
       <div className="cover-names">
         <Bloom/>
@@ -209,8 +209,8 @@ function Cover({ guest, settings, couple, onOpen, opened }) {
 function Hero({ couple, event, guestName }) {
   const date = event?.date;
   return <section className="invite-hero" id="pembuka">
-    <Sprig className="orn orn-tr"/>
-    <Sprig className="orn orn-bl"/>
+    <Sprig className="orn orn-tr" bouquet="aster"/>
+    <Sprig className="orn orn-bl" bouquet="tulip"/>
     <div className="hero-title" data-reveal=""><h2 tabIndex="-1"><CoupleTitle couple={couple} /></h2>{date && <time dateTime={date}>{formatPart(date, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</time>}{event?.venue && <p className="hero-place">{event.venue}</p>}</div>
     <div className="hero-letter" data-reveal="" data-delay="140">
       <Bloom/>
@@ -227,7 +227,7 @@ function Verse() {
     <span className="verse-rings" aria-hidden="true"><i/><i/><i/></span>
     <figure>
       <p className="verse-arabic" lang="ar" dir="rtl" data-reveal="mask">وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً ۗاِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ</p>
-      <Bloom/>
+      <Bloom kind="daisy"/>
       <blockquote data-reveal="" data-delay="160"><p>“Di antara tanda-tanda (kebesaran)-Nya ialah bahwa Dia menciptakan pasangan-pasangan untukmu dari (jenis) dirimu sendiri agar kamu merasa tenteram kepadanya. Dia menjadikan di antaramu rasa cinta dan kasih sayang. Sesungguhnya pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.”</p></blockquote>
       <figcaption data-reveal="" data-delay="260">QS. Ar-Rum: 21</figcaption>
     </figure>
@@ -241,14 +241,14 @@ function Couple({ settings }) {
   ];
   return <section className="couple-section" id="mempelai">
     <div className="couple-intro">
-      <Sprig className="orn orn-br"/>
+      <Sprig className="orn orn-br" bouquet="mawar"/>
       <h2 data-reveal="mask" data-delay="80">Dua cerita,<br />satu perjalanan.</h2>
       <p data-reveal="" data-delay="180">Kehadiran dan doa baik Anda menjadi bagian yang kami simpan dari hari ini.</p>
     </div>
     <div className="couple-portraits">{people.map((person, index) => <article key={index}>
       <div className="portrait-mount">
         <div className="portrait-frame" data-reveal="print" data-delay={index * 120}>{person.photo ? <img src={person.photo} alt={`Potret ${person.name}`} loading="lazy"/> : <span>{person.short?.charAt(0)}</span>}</div>
-        <Sprig className="orn orn-portrait"/>
+        <Sprig className="orn orn-portrait" bouquet={index ? "tulip" : "melati"}/>
       </div>
       <div className="portrait-meta" data-reveal="" data-delay={index * 120 + 240}>
         <div className="portrait-caption"><h3>{person.short}</h3>{person.name !== person.short && <p>{person.name}</p>}</div>
@@ -266,14 +266,14 @@ function Countdown({ event }) {
   }, [event]);
   if (remaining.done) return <section className="countdown-section" id="hitung-mundur"><p>Hari yang kami nantikan telah tiba.</p></section>;
   // Each digit is keyed by its value, so only the digits that change remount and roll in.
-  return <section className="countdown-section" id="hitung-mundur"><Sprig className="orn orn-tr"/><Sprig className="orn orn-bl"/><p>Menuju hari pernikahan</p><h2 data-reveal="mask"><span>{formatPart(event.date, { weekday: "long" })},</span> <span>{formatPart(event.date, { day: "numeric", month: "long", year: "numeric" })}</span></h2><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
+  return <section className="countdown-section" id="hitung-mundur"><Sprig className="orn orn-tr" bouquet="tulip"/><Sprig className="orn orn-bl" bouquet="aster"/><p>Menuju hari pernikahan</p><h2 data-reveal="mask"><span>{formatPart(event.date, { weekday: "long" })},</span> <span>{formatPart(event.date, { day: "numeric", month: "long", year: "numeric" })}</span></h2><div>{[[remaining.days, "Hari"], [remaining.hours, "Jam"], [remaining.minutes, "Menit"], [remaining.seconds, "Detik"]].map(([value, label]) => <span key={label}><strong>{[...String(value).padStart(2, "0")].map((digit, position) => <b key={`${position}-${digit}`}>{digit}</b>)}</strong><small>{label}</small></span>)}</div></section>;
 }
 
 function Events({ events, coupleNames }) {
   const visible = events.filter((event) => event.date || event.venue);
   if (!visible.length) return null;
   return <section className="events-section" id="acara">
-    <Sprig className="orn orn-tr"/>
+    <Sprig className="orn orn-tr" bouquet="melati"/>
     <header>
       <h2 data-reveal="mask">Kapan dan di mana</h2>
       <p data-reveal="" data-delay="80">{visible.length === 2 ? "Dua momen untuk dirayakan bersama keluarga dan sahabat." : "Kami menantikan kehadiran Anda untuk merayakan hari bahagia ini."}</p>
@@ -331,7 +331,7 @@ function Gifts({ accounts }) {
   }
 
   return <section className="gift-section" id="hadiah">
-    <Bloom/>
+    <Bloom kind="tulip"/>
     <h2 data-reveal="mask">Tanda kasih</h2>
     <p data-reveal="" data-delay="80">Doa dan kehadiran Anda sudah lebih dari cukup. Bila ingin mengirim tanda kasih, detailnya di bawah.</p>
     <button className="gift-reveal" onClick={() => setOpen(!open)} aria-expanded={open}>{open ? "Tutup detail" : "Lihat amplop digital"}</button>
@@ -364,7 +364,7 @@ function Wishes({ slug, guestName, wishes }) {
     finally { setLoading(false); }
   }
   return <section className="invite-wishes" id="ucapan">
-    <Sprig className="orn orn-tr"/>
+    <Sprig className="orn orn-tr" bouquet="mawar"/>
     <header>
       <h2 data-reveal="mask">Titipkan doa untuk kami.</h2>
       <p data-reveal="" data-delay="120">Setiap pesan kami simpan sebagai kenangan. Ucapan dari {guestName} akan tampil di sini setelah kami membacanya.</p>
