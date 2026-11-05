@@ -6,7 +6,17 @@ import { Empty } from "./Admin.jsx";
 
 const emptyForm = { name: "", phone: "", connection: "", side: "" };
 const sides = { groom: "Mempelai pria", bride: "Mempelai wanita" };
-const renderTemplate = (template, values) => String(template ?? "").replace(/{{\s*(guest_name|couple_names|event_date|invite_url)\s*}}/g, (_, key) => values[key] ?? "");
+const renderTemplate = (template, values) => String(template ?? "").replace(/{{\s*(guest_name|couple_names|event_date|event_details|invite_url)\s*}}/g, (_, key) => values[key] ?? "");
+const zones = { "Asia/Jakarta": "WIB", "Asia/Makassar": "WITA", "Asia/Jayapura": "WIT" };
+const longDate = (date) => date ? new Intl.DateTimeFormat("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).format(new Date(`${date}T12:00:00`)) : "";
+const clock = (time) => time.replace(":", ".");
+
+function eventDetails(events = []) {
+  return events.filter((event) => event.date || event.venue).map((event) => {
+    const time = event.startTime && `Pukul ${clock(event.startTime)}${event.endTime ? ` - ${clock(event.endTime)}` : ""} ${zones[event.timezone] ?? ""}`.trim();
+    return [event.label && `*${event.label}*`, longDate(event.date), time, event.venue, event.mapsUrl].filter(Boolean).join("\n");
+  }).join("\n\n");
+}
 
 export default function Guests({ guests, setGuests, settings }) {
   const [params, setParams] = useSearchParams();
@@ -71,7 +81,8 @@ export default function Guests({ guests, setGuests, settings }) {
     const message = renderTemplate(settings?.whatsappTemplate, {
       guest_name: guest.name,
       couple_names: coupleNames,
-      event_date: settings?.events?.[0]?.date || "",
+      event_date: longDate(settings?.events?.[0]?.date),
+      event_details: eventDetails(settings?.events),
       invite_url: url,
     });
     window.open(`https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");

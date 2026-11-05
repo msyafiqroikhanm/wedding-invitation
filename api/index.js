@@ -303,7 +303,7 @@ function defaultSettings() {
     gallery: [],
     backsound: "",
     giftAccounts: [],
-    whatsappTemplate: "Halo {{guest_name}},\n\nKami mengundang Anda untuk hadir di pernikahan {{couple_names}}.\n\nDetail undangan:\n{{invite_url}}",
+    whatsappTemplate: "Kepada Yth.\nBapak/Ibu/Saudara/i {{guest_name}}\n\nDengan penuh rasa syukur, kami bermaksud mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu di hari pernikahan kami, yang akan dilaksanakan pada:\n\n{{event_details}}\n\nUndangan lengkap beserta galeri foto dapat dibuka melalui tautan berikut. Mohon kesediaannya juga untuk mengisi konfirmasi kehadiran di sana.\n{{invite_url}}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.\n\nAtas perhatian dan doa restunya, kami ucapkan terima kasih.\n\nHormat kami,\n{{couple_names}}",
   };
 }
 

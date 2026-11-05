@@ -43,7 +43,7 @@ export function isValidSlug(value) {
 }
 
 export function renderWhatsAppTemplate(template, values) {
-  return String(template ?? "").replace(/{{\s*(guest_name|couple_names|event_date|invite_url)\s*}}/g, (_, key) => values[key] ?? "");
+  return String(template ?? "").replace(/{{\s*(guest_name|couple_names|event_date|event_details|invite_url)\s*}}/g, (_, key) => values[key] ?? "");
 }
 
 export function cleanText(value, max = 500) {
