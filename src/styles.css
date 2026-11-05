@@ -464,10 +464,13 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 @keyframes leaf-open { from { transform: scale(0); } }
 @keyframes blossom-open { from { transform: scale(0) rotate(-70deg); } }
 @media (prefers-reduced-motion: no-preference) {
-  .orn .sprig-sway { animation: sway 7s ease-in-out infinite alternate; }
-  .orn:nth-of-type(2n) .sprig-sway { animation-duration: 8.5s; animation-delay: -3s; }
+  .orn .sprig-sway { animation: sway 6s ease-in-out infinite alternate; }
+  .orn:nth-of-type(2n) .sprig-sway { animation-duration: 7.5s; animation-delay: -3s; }
+  /* After a blossom opens it keeps nodding in the breeze; the --i offset keeps neighbours out of step. */
+  [data-revealed] .blossom { animation: blossom-open .9s cubic-bezier(.34,1.56,.64,1) backwards, nod 4.5s ease-in-out infinite alternate; animation-delay: calc(.5s + var(--i) * 110ms), calc(1.6s + var(--i) * 370ms); }
 }
-@keyframes sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2deg); } }
+@keyframes sway { from { transform: rotate(-4deg); } to { transform: rotate(3.5deg); } }
+@keyframes nod { to { transform: rotate(14deg) scale(1.08); } }
 
 /* Chapter dots: a quiet page marker on the right edge; the label shows briefly on arrival or hover. */
 .chapter-dots { position: fixed; z-index: 57; top: 50%; right: calc(50% - min(50vw, 600px) + 2px); display: grid; opacity: 0; transform: translate(12px, -50%); pointer-events: none; transition: opacity .5s ease .4s, transform .6s cubic-bezier(.22,1,.36,1) .4s; }
