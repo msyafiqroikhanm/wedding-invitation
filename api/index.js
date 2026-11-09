@@ -95,7 +95,7 @@ app.post("/api/guests/import", requireAdmin, express.raw({ type: "application/vn
     return res.status(400).json({ error: error.message });
   }
   const db = await getDb();
-  const existing = await db.collection("guests").find({ phone: { $in: parsed.guests.map((guest) => guest.phone) } }, { projection: { phone: 1 } }).toArray();
+  const existing = await db.collection("guests").find({ phone: { $in: parsed.guests.map((guest) => guest.phone).filter(Boolean) } }, { projection: { phone: 1 } }).toArray();
   const phones = new Set(existing.map((guest) => guest.phone));
   const now = new Date();
   const fresh = parsed.guests.filter((guest) => !phones.has(guest.phone)).map((guest) => ({ ...guest, slug: createSlug(guest.name), sentAt: null, createdAt: now, updatedAt: now }));

@@ -86,6 +86,10 @@ export default function Guests({ guests, setGuests, settings }) {
       invite_url: url,
     });
     window.open(`https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    await markSent(guest);
+  }
+
+  async function markSent(guest) {
     try {
       replaceGuest(await api(`/guests/${guest._id}/mark-sent`, { method: "POST" }));
       setNotice(`Status ${guest.name} ditandai sudah dikirim.`);
@@ -139,9 +143,9 @@ export default function Guests({ guests, setGuests, settings }) {
       <div className="guest-table-head" role="row"><span>Tamu</span><span>WhatsApp</span><span>Koneksi</span><span>Pihak mempelai</span><span>Status</span><span className="sr-only">Aksi</span></div>
       {filtered.map((guest) => <div className="guest-row" role="row" key={guest._id}>
         <div className="guest-name"><span className="avatar-letter">{guest.name.charAt(0)}</span><div><strong>{guest.name}</strong><small>/{guest.slug}</small></div></div>
-        <span className="guest-phone">+{guest.phone}</span><span className="guest-connection">{guest.connection}</span><span className="guest-side">{sides[guest.side] || "Belum ditentukan"}</span>
+        <span className="guest-phone">{guest.phone ? `+${guest.phone}` : "Tanpa nomor"}</span><span className="guest-connection">{guest.connection}</span><span className="guest-side">{sides[guest.side] || "Belum ditentukan"}</span>
         <span className={`status ${guest.sentAt ? "status-sent" : "status-unsent"}`}>{guest.sentAt ? "Sudah dikirim" : "Belum dikirim"}</span>
-        <div className="row-actions"><button className="button button-send" onClick={() => send(guest)}><Icon name="send" size={17}/>{guest.sentAt ? "Kirim lagi" : "Kirim WA"}</button><button className="icon-button" onClick={() => copyLink(guest)} aria-label={`Salin link ${guest.name}`}><Icon name="copy" size={18}/></button><details><summary className="icon-button" aria-label="Aksi lainnya"><Icon name="more"/></summary><div className="action-menu"><button onClick={() => setEditing(guest)}><Icon name="edit"/>Edit</button><button onClick={() => regenerate(guest)}><Icon name="link"/>Buat link baru</button>{guest.sentAt && <button onClick={() => reset(guest)}><Icon name="close"/>Tandai belum</button>}<button className="danger" onClick={() => remove(guest)}><Icon name="trash"/>Hapus</button></div></details></div>
+        <div className="row-actions">{guest.phone && <button className="button button-send" onClick={() => send(guest)}><Icon name="send" size={17}/>{guest.sentAt ? "Kirim lagi" : "Kirim WA"}</button>}<button className="icon-button" onClick={() => copyLink(guest)} aria-label={`Salin link ${guest.name}`}><Icon name="copy" size={18}/></button><details><summary className="icon-button" aria-label="Aksi lainnya"><Icon name="more"/></summary><div className="action-menu"><button onClick={() => setEditing(guest)}><Icon name="edit"/>Edit</button><button onClick={() => regenerate(guest)}><Icon name="link"/>Buat link baru</button>{guest.sentAt ? <button onClick={() => reset(guest)}><Icon name="close"/>Tandai belum</button> : <button onClick={() => markSent(guest)}><Icon name="check"/>Tandai sudah dikirim</button>}<button className="danger" onClick={() => remove(guest)}><Icon name="trash"/>Hapus</button></div></details></div>
       </div>)}
     </div> : <Empty title="Tidak ada tamu ditemukan" text={query || status !== "all" || connection !== "all" || side !== "all" ? "Ubah pencarian atau filter untuk melihat tamu lain." : "Tambahkan nama pertama untuk membuat link personal."} />}
     {editing && <GuestForm guest={editing} onClose={() => setEditing(null)} onSaved={(saved) => { setGuests((current) => editing._id ? current.map((guest) => guest._id === saved._id ? saved : guest) : [saved, ...current]); setEditing(null); setNotice(`${saved.name} berhasil disimpan.`); }} />}
@@ -168,7 +172,7 @@ function GuestForm({ guest, onClose, onSaved }) {
 
   return <div className="sheet-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}><aside className="form-sheet" aria-label={guest._id ? "Edit tamu" : "Tambah tamu"}><header><div><h2>{guest._id ? "Edit tamu" : "Tamu baru"}</h2><p>Link personal dibuat otomatis setelah disimpan.</p></div><button className="icon-button" onClick={onClose} aria-label="Tutup"><Icon name="close"/></button></header><form onSubmit={submit}>
     <label>Nama tamu<input autoFocus required value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} placeholder="Contoh: Budi dan Keluarga" /></label>
-    <label>Nomor WhatsApp<input inputMode="tel" required value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} placeholder="0812 3456 7890" /><small>Format 08, +62, dan 62 dapat digunakan.</small></label>
+    <label>Nomor WhatsApp (opsional)<input inputMode="tel" value={form.phone} onChange={(event) => setForm({ ...form, phone: event.target.value })} placeholder="0812 3456 7890" /><small>Kosongkan jika undangan dikirim lewat cara lain. Format 08, +62, dan 62 dapat digunakan.</small></label>
     <label>Koneksi<select required value={form.connection} onChange={(event) => setForm({ ...form, connection: event.target.value })}><option value="">Pilih koneksi</option><option>Keluarga</option><option>Teman Sekolah</option><option>Teman Kuliah</option><option>Teman Kantor</option><option>Tetangga</option><option>Lainnya</option></select></label>
     <label>Tamu dari pihak<select required={!guest._id || !!guest.side} value={form.side} onChange={(event) => setForm({ ...form, side: event.target.value })}><option value="">Belum ditentukan</option>{Object.entries(sides).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>{guest._id && !guest.side && <small>Tamu lama dapat dilengkapi kemudian.</small>}</label>
     {error && <p className="form-error" role="alert">{error}</p>}

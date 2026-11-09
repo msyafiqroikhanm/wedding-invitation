@@ -14,7 +14,7 @@ export async function guestTemplate() {
   const instructions = workbook.addWorksheet("Petunjuk");
   instructions.getColumn(1).width = 90;
   instructions.addRow(["Isi satu tamu per baris di sheet Daftar tamu. Jangan ubah judul kolom."]);
-  instructions.addRow(["Nomor WhatsApp ditulis sebagai teks, misalnya 081234567890 atau +6281234567890."]);
+  instructions.addRow(["Nomor WhatsApp boleh dikosongkan. Jika diisi, tulis sebagai teks, misalnya 081234567890 atau +6281234567890."]);
   instructions.addRow([`Tamu dari pihak: ${Object.values(GUEST_SIDES).join(" atau ")}.`]);
   instructions.addRow(["Baris kosong diabaikan. Nomor yang sudah terdaftar akan dilewati."]);
   return workbook.xlsx.writeBuffer();
@@ -50,8 +50,8 @@ export async function parseGuestWorkbook(buffer) {
     const side = Object.entries(GUEST_SIDES).find(([, label]) => label.toLowerCase() === cells[3].text.trim().toLowerCase())?.[0];
     const { guest, error } = validateGuest({ name: cells[0].text, phone: cells[1].text, connection: cells[2].text, side });
     if (error) throw new Error(`Baris ${number}: ${error}`);
-    if (seen.has(guest.phone)) { skipped += 1; continue; }
-    seen.add(guest.phone);
+    if (guest.phone && seen.has(guest.phone)) { skipped += 1; continue; }
+    if (guest.phone) seen.add(guest.phone);
     guests.push(guest);
   }
   if (!guests.length && !skipped) throw new Error("Daftar tamu masih kosong. Isi template sebelum mengimpor.");

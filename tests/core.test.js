@@ -55,6 +55,9 @@ test("validates party side for new guests while preserving legacy guest edits", 
   assert.match(validateGuest({ ...input, side: "" }).error, /pihak mempelai/);
   assert.equal(validateGuest({ ...input, side: "" }, { requireSide: false }).guest.side, "");
   assert.match(validateGuest({ ...input, side: "unknown" }, { requireSide: false }).error, /pihak mempelai/);
+  assert.equal(validateGuest({ ...input, phone: "" }).guest.phone, "");
+  assert.match(validateGuest({ ...input, phone: "123" }).error, /tidak valid/);
+  assert.match(validateGuest({ ...input, phone: "abc" }).error, /tidak valid/);
 });
 
 test("Excel template round-trips guests and skips duplicate normalized numbers", async () => {
@@ -64,17 +67,19 @@ test("Excel template round-trips guests and skips duplicate normalized numbers",
   sheet.addRow(["Ayu", "081234567890", "Keluarga", "Mempelai pria"]);
   sheet.addRow(["Ayu lain", "+6281234567890", "Teman", "Mempelai wanita"]);
   sheet.addRow(["Bima", "081298765432", "Teman", "Mempelai wanita"]);
+  sheet.addRow(["Dodi", "", "Teman", "Mempelai pria"]);
+  sheet.addRow(["Euis", "", "Teman", "Mempelai wanita"]);
   const { guests, skipped } = await parseGuestWorkbook(await workbook.xlsx.writeBuffer());
   assert.equal(skipped, 1);
   assert.deepEqual(guests.map(({ name, phone, side }) => [name, phone, side]), [
-    ["Ayu", "6281234567890", "groom"], ["Bima", "6281298765432", "bride"],
+    ["Ayu", "6281234567890", "groom"], ["Bima", "6281298765432", "bride"], ["Dodi", "", "groom"], ["Euis", "", "bride"],
   ]);
 
   sheet.addRow(["Cici", 81234567890, "Keluarga", "Mempelai pria"]);
-  await assert.rejects(parseGuestWorkbook(await workbook.xlsx.writeBuffer()), /Baris 5.*sebagai teks/);
-  sheet.getRow(5).getCell(2).value = "081245678901";
-  sheet.getRow(5).getCell(4).value = "Lainnya";
-  await assert.rejects(parseGuestWorkbook(await workbook.xlsx.writeBuffer()), /Baris 5.*pihak mempelai/);
+  await assert.rejects(parseGuestWorkbook(await workbook.xlsx.writeBuffer()), /Baris 7.*sebagai teks/);
+  sheet.getRow(7).getCell(2).value = "081245678901";
+  sheet.getRow(7).getCell(4).value = "Lainnya";
+  await assert.rejects(parseGuestWorkbook(await workbook.xlsx.writeBuffer()), /Baris 7.*pihak mempelai/);
 });
 
 test("authenticated admin can download a template and gets a clear invalid-file error", async () => {

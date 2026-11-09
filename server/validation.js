@@ -21,7 +21,7 @@ export function validateGuest(input, { requireSide = true } = {}) {
   const connection = cleanText(input.connection, 80);
   const side = String(input.side ?? "").trim();
   if (!name) return { error: "Nama tamu wajib diisi." };
-  if (!isValidPhone(phone)) return { error: "Nomor WhatsApp Indonesia tidak valid." };
+  if (String(input.phone ?? "").trim() && !isValidPhone(phone)) return { error: "Nomor WhatsApp Indonesia tidak valid." };
   if (!connection) return { error: "Koneksi wajib diisi." };
   if ((requireSide || side) && !GUEST_SIDES[side]) return { error: "Pilih pihak mempelai pria atau wanita." };
   return { guest: { name, phone, connection, side } };
