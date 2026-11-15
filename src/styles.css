@@ -152,6 +152,8 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
 .guest-name div { min-width: 0; display: grid; gap: 3px; }.guest-name strong, .guest-name small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }.guest-name small { color: var(--muted); font-size: .68rem; }
 .guest-phone { font-size: .86rem; font-variant-numeric: tabular-nums; }
 .guest-side { color: var(--muted); font-size: .82rem; }
+.guest-delivery { display: grid; justify-items: start; gap: 6px; padding: 8px 0; }
+.guest-delivery .button { padding: 0 6px; font-size: .72rem; gap: 4px; }
 .row-actions { display: flex; justify-content: flex-end; align-items: center; gap: 3px; }
 .row-actions details { position: relative; }.row-actions summary { list-style: none; }.row-actions summary::-webkit-details-marker { display: none; }
 .action-menu { position: absolute; z-index: 10; top: 46px; right: 0; width: 190px; padding: 6px; border: 1px solid var(--line); border-radius: 7px; background: #fff; box-shadow: 0 14px 35px rgba(40,55,50,.14); }
@@ -542,7 +544,7 @@ input::placeholder, textarea::placeholder { color: #7b8783; opacity: 1; }
   .guest-table-head { display: none; }
   .guest-table { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border: 0; }
   .guest-row { min-height: 220px; padding: 20px; border: 1px solid var(--line); display: flex; flex-direction: column; align-items: stretch; gap: 10px; background: rgba(255,255,255,.46); }
-  .guest-row > .status { order: 1; }.guest-row > .guest-name { order: 2; margin-top: 4px; }.guest-row > .guest-phone { order: 3; }.guest-row > .guest-connection { order: 4; color: var(--muted); font-size: .82rem; }.guest-row > .guest-side { order: 5; }.guest-row > .row-actions { order: 6; margin-top: auto; justify-content: flex-start; }
+  .guest-row > .guest-delivery { order: 1; }.guest-row > .guest-name { order: 2; margin-top: 4px; }.guest-row > .guest-phone { order: 3; }.guest-row > .guest-connection { order: 4; color: var(--muted); font-size: .82rem; }.guest-row > .guest-side { order: 5; }.guest-row > .row-actions { order: 6; margin-top: auto; justify-content: flex-start; }
 }
 
 @media (max-width: 1050px) {

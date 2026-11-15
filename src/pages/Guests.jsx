@@ -75,16 +75,20 @@ export default function Guests({ guests, setGuests, settings }) {
     setGuests((current) => current.map((guest) => guest._id === updated._id ? updated : guest));
   }
 
-  async function send(guest) {
+  function invitationMessage(guest) {
     const url = invitationUrl(guest.slug);
     const coupleNames = [settings?.couple?.partnerOne, settings?.couple?.partnerTwo].filter(Boolean).join(" & ");
-    const message = renderTemplate(settings?.whatsappTemplate, {
+    return renderTemplate(settings?.whatsappTemplate, {
       guest_name: guest.name,
       couple_names: coupleNames,
       event_date: longDate(settings?.events?.[0]?.date),
       event_details: eventDetails(settings?.events),
       invite_url: url,
     });
+  }
+
+  async function send(guest) {
+    const message = invitationMessage(guest);
     window.open(`https://wa.me/${guest.phone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
     await markSent(guest);
   }
@@ -98,9 +102,13 @@ export default function Guests({ guests, setGuests, settings }) {
     }
   }
 
-  async function copyLink(guest) {
-    await navigator.clipboard.writeText(invitationUrl(guest.slug));
-    setNotice(`Link ${guest.name} berhasil disalin.`);
+  async function copyMessage(guest) {
+    try {
+      await navigator.clipboard.writeText(invitationMessage(guest));
+      setNotice(`Pesan undangan ${guest.name} berhasil disalin.`);
+    } catch {
+      setError("Pesan belum tersalin. Izinkan akses clipboard, lalu coba lagi.");
+    }
   }
 
   async function reset(guest) {
@@ -144,8 +152,8 @@ export default function Guests({ guests, setGuests, settings }) {
       {filtered.map((guest) => <div className="guest-row" role="row" key={guest._id}>
         <div className="guest-name"><span className="avatar-letter">{guest.name.charAt(0)}</span><div><strong>{guest.name}</strong><small>/{guest.slug}</small></div></div>
         <span className="guest-phone">{guest.phone ? `+${guest.phone}` : "Tanpa nomor"}</span><span className="guest-connection">{guest.connection}</span><span className="guest-side">{sides[guest.side] || "Belum ditentukan"}</span>
-        <span className={`status ${guest.sentAt ? "status-sent" : "status-unsent"}`}>{guest.sentAt ? "Sudah dikirim" : "Belum dikirim"}</span>
-        <div className="row-actions">{guest.phone && <button className="button button-send" onClick={() => send(guest)}><Icon name="send" size={17}/>{guest.sentAt ? "Kirim lagi" : "Kirim WA"}</button>}<button className="icon-button" onClick={() => copyLink(guest)} aria-label={`Salin link ${guest.name}`}><Icon name="copy" size={18}/></button><details><summary className="icon-button" aria-label="Aksi lainnya"><Icon name="more"/></summary><div className="action-menu"><button onClick={() => setEditing(guest)}><Icon name="edit"/>Edit</button><button onClick={() => regenerate(guest)}><Icon name="link"/>Buat link baru</button>{guest.sentAt ? <button onClick={() => reset(guest)}><Icon name="close"/>Tandai belum</button> : <button onClick={() => markSent(guest)}><Icon name="check"/>Tandai sudah dikirim</button>}<button className="danger" onClick={() => remove(guest)}><Icon name="trash"/>Hapus</button></div></details></div>
+        <div className="guest-delivery"><span className={`status ${guest.sentAt ? "status-sent" : "status-unsent"}`}>{guest.sentAt ? "Sudah dikirim" : "Belum dikirim"}</span>{!guest.sentAt && <button className="button button-secondary" onClick={() => markSent(guest)}><Icon name="check" size={16}/>Tandai terkirim</button>}</div>
+        <div className="row-actions">{guest.phone && <button className="button button-send" onClick={() => send(guest)}><Icon name="send" size={17}/>{guest.sentAt ? "Kirim lagi" : "Kirim WA"}</button>}<button className="icon-button" onClick={() => copyMessage(guest)} aria-label={`Salin pesan undangan ${guest.name}`} title="Salin pesan undangan"><Icon name="copy" size={18}/></button><details><summary className="icon-button" aria-label="Aksi lainnya"><Icon name="more"/></summary><div className="action-menu"><button onClick={() => setEditing(guest)}><Icon name="edit"/>Edit</button><button onClick={() => regenerate(guest)}><Icon name="link"/>Buat link baru</button>{guest.sentAt && <button onClick={() => reset(guest)}><Icon name="close"/>Tandai belum</button>}<button className="danger" onClick={() => remove(guest)}><Icon name="trash"/>Hapus</button></div></details></div>
       </div>)}
     </div> : <Empty title="Tidak ada tamu ditemukan" text={query || status !== "all" || connection !== "all" || side !== "all" ? "Ubah pencarian atau filter untuk melihat tamu lain." : "Tambahkan nama pertama untuk membuat link personal."} />}
     {editing && <GuestForm guest={editing} onClose={() => setEditing(null)} onSaved={(saved) => { setGuests((current) => editing._id ? current.map((guest) => guest._id === saved._id ? saved : guest) : [saved, ...current]); setEditing(null); setNotice(`${saved.name} berhasil disimpan.`); }} />}

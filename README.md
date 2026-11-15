@@ -132,7 +132,9 @@ The tests cover phone normalization, strict slug format, WhatsApp template repla
 
 ## WhatsApp Tracking
 
-`Sudah dikirim` means the dashboard opened WhatsApp with the guest number and prepared message, then saved `sentAt`. Regular `wa.me` links cannot confirm that WhatsApp sent, delivered, or read the message. Admins can reset the status if they cancel the handoff.
+`Sudah dikirim` means the dashboard opened WhatsApp with the guest number and prepared message, or an admin used **Tandai terkirim** directly below the guest's status, then saved `sentAt`. Regular `wa.me` links cannot confirm that WhatsApp sent, delivered, or read the message. Admins can reset the status from **Aksi lainnya** if they cancel the handoff.
+
+The copy action copies the complete personalized message using the configured WhatsApp template, including the guest's invitation URL when present in the template. It also works for guests without a WhatsApp number and does not change their sending status.
 
 ## Importing Guests
 
@@ -181,6 +183,8 @@ Browsers require a user gesture. Music starts after the guest presses `Buka unda
 #### Fixed
 
 - Allowed writes from the active Vercel production alias while preserving same-origin protection.
+- Guest copy now uses the same personalized message as WhatsApp instead of copying only the link.
+- Moved the manual sent action out of the More menu and placed it directly below the guest's status.
 
 ### [0.1.0] - 2026-08-25
 
