@@ -273,7 +273,7 @@ app.get("/invite/:slug", asyncRoute(async (req, res) => {
     `<meta property="og:title" content="${escapeHtml(meta.title)}" />`,
     `<meta property="og:description" content="${escapeHtml(meta.description)}" />`,
     `<meta property="og:url" content="${escapeHtml(`${origin}/invite/${encodeURIComponent(req.params.slug)}`)}" />`,
-    `<meta property="og:image" content="${origin}/og-cover.jpg" />`,
+    `<meta property="og:image" content="${origin}/og-invite.jpg" />`,
     `<meta property="og:image:type" content="image/jpeg" />`,
     `<meta property="og:image:width" content="1200" />`,
     `<meta property="og:image:height" content="630" />`,

@@ -14,7 +14,7 @@ const clock = (time) => time.replace(":", ".");
 function eventDetails(events = []) {
   return events.filter((event) => event.date || event.venue).map((event) => {
     const time = event.startTime && `Pukul ${clock(event.startTime)}${event.endTime ? ` - ${clock(event.endTime)}` : ""} ${zones[event.timezone] ?? ""}`.trim();
-    return [event.label && `*${event.label}*`, longDate(event.date), time, event.venue, event.mapsUrl].filter(Boolean).join("\n");
+    return [event.label && `*${event.label}*`, longDate(event.date), time, event.venue].filter(Boolean).join("\n");
   }).join("\n\n");
 }
 
